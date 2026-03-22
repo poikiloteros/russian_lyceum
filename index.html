@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth bg-[#F4F4F6]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Russian Lyceum Oxford | Bold Redesign</title>
+    
+    <!-- Google Fonts: Bricolage Grotesque (Bold/Display) & DM Sans (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"DM Sans"', 'sans-serif'],
+                        display: ['"Bricolage Grotesque"', 'sans-serif'],
+                    },
+                    colors: {
+                        'ly-blue': '#0047FF',    /* Electric Blue */
+                        'ly-coral': '#FF3366',   /* Vibrant Coral/Red */
+                        'ly-yellow': '#FFD600',  /* High-impact Yellow */
+                        'ly-dark': '#111111',    /* Near Black */
+                        'ly-light': '#F4F4F6',   /* Off White */
+                    },
+                    boxShadow: {
+                        /* Softened Neo-Brutalist Shadows */
+                        'brutal': '8px 8px 0px 0px rgba(17,17,17,0.12)',
+                        'brutal-hover': '12px 12px 0px 0px rgba(17,17,17,0.18)',
+                        'brutal-intense': '12px 12px 0px 0px rgba(17,17,17,0.8)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            overflow-x: hidden;
+            color: #111;
+            /* Prevent overscroll bounce on mobile for a cleaner app feel */
+            overscroll-behavior-y: none; 
+        }
+
+        /* Typography Utilities */
+        .text-outline {
+            color: transparent;
+            -webkit-text-stroke: 1.5px #111;
+        }
+        .text-outline-white {
+            color: transparent;
+            -webkit-text-stroke: 1.5px #fff;
+        }
+
+        /* The Canvas for the Wake */
+        #boat-trail {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 44; 
+        }
+        
+        /* Ambient Boat Element */
+        #sailing-boat {
+            position: fixed;
+            width: 90px; /* Slightly smaller for mobile scaling */
+            pointer-events: none;
+            z-index: 45; 
+            will-change: transform, filter;
+            transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        @media (min-width: 768px) {
+            #sailing-boat { width: 130px; }
+        }
+
+        /* Editorial Marquee Animations */
+        @keyframes marquee-l {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes marquee-r {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+        
+        .track-left {
+            display: flex;
+            width: max-content;
+            animation: marquee-l 40s linear infinite;
+        }
+        .track-right {
+            display: flex;
+            width: max-content;
+            animation: marquee-r 35s linear infinite;
+        }
+        
+        /* Pause entire track on hover (Desktop only) */
+        @media (hover: hover) {
+            .marquee-wrapper:hover .track-left,
+            .marquee-wrapper:hover .track-right {
+                animation-play-state: paused;
+            }
+        }
+
+        /* Softened Editorial Image Masking */
+        .editorial-image {
+            filter: grayscale(85%) contrast(1.1);
+            mix-blend-mode: luminosity;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            border: 2px solid transparent;
+            transform: scale(1);
+        }
+        
+        /* Desktop Hover state */
+        @media (hover: hover) {
+            .image-container:hover .editorial-image {
+                filter: grayscale(0%) contrast(1);
+                mix-blend-mode: normal;
+                transform: scale(1.02) rotate(-1deg);
+                border-color: rgba(17,17,17,0.2);
+                box-shadow: 10px 10px 0px 0px rgba(17,17,17,0.15);
+                z-index: 20;
+            }
+        }
+
+        /* Mobile Scroll-in-view state (Applied via JS IntersectionObserver) */
+        .image-container.in-view .editorial-image {
+            filter: grayscale(0%) contrast(1);
+            mix-blend-mode: normal;
+            transform: scale(1.02) rotate(-1deg);
+            border-color: rgba(17,17,17,0.2);
+            box-shadow: 6px 6px 0px 0px rgba(17,17,17,0.15);
+            z-index: 20;
+        }
+
+        /* Custom Accordion */
+        .acc-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.85, 0, 0.15, 1);
+        }
+        
+        @media (hover: hover) {
+            .acc-trigger:hover .acc-arrow { transform: translateX(8px); }
+        }
+        .acc-trigger.active .acc-arrow {
+            transform: rotate(90deg);
+        }
+
+        /* Hide Scrollbar for cleaner look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #F4F4F6; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Mobile Nav Overlay Transition */
+        #mobile-menu {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #mobile-menu.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        #mobile-menu .menu-link {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #mobile-menu.open .menu-link {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="antialiased relative selection:bg-ly-yellow selection:text-ly-dark">
+
+    <!-- Ambient Background Elements (Canvas & Boat) -->
+    <canvas id="boat-trail"></canvas>
+    <img id="sailing-boat" src="https://res.cloudinary.com/dp3g7dyx9/image/upload/v1774169121/logo_traced_no_white_filling_nxxhyj.png" alt="Sailing Boat">
+
+    <!-- Softened Editorial Masthead -->
+    <nav id="masthead" class="fixed top-0 left-0 w-full z-50 bg-ly-light/95 backdrop-blur-sm border-b-2 border-ly-dark/10 transition-transform duration-500 will-change-transform">
+        <div class="max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-12 h-16 md:h-20 flex justify-between items-center">
+            <a href="#" class="flex items-center gap-2 md:gap-3 group">
+                <div class="w-8 h-8 md:w-10 md:h-10 bg-ly-dark flex items-center justify-center text-white font-display font-800 text-xl md:text-2xl rounded-lg group-hover:bg-ly-blue group-hover:rotate-6 transition-all duration-300">L</div>
+                <span class="font-display font-800 text-xl md:text-2xl tracking-tight text-ly-dark uppercase mt-1">Lyceum</span>
+            </a>
+            
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex gap-10 text-sm font-bold uppercase tracking-widest text-ly-dark/80">
+                <a href="#format" class="hover:text-ly-blue transition-colors">Format</a>
+                <a href="#gallery" class="hover:text-ly-coral transition-colors">Gallery</a>
+                <a href="#philosophy" class="hover:text-ly-yellow transition-colors">Philosophy</a>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <a href="#contacts" class="hidden sm:inline-block bg-ly-blue text-white px-6 py-2 md:px-7 md:py-2.5 text-xs md:text-sm font-bold uppercase tracking-wider rounded-full shadow-brutal hover:-translate-y-1 hover:shadow-brutal-hover transition-all duration-300">
+                    Free Trial
+                </a>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden flex flex-col justify-center items-center w-10 h-10 space-y-1.5 focus:outline-none z-[60]">
+                    <span class="block w-6 h-0.5 bg-ly-dark transition-transform duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-ly-dark transition-opacity duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-ly-dark transition-transform duration-300"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-ly-dark z-40 opacity-0 invisible flex flex-col justify-center items-center">
+        <div class="flex flex-col items-center gap-8 text-white font-display font-800 text-4xl uppercase tracking-tighter">
+            <a href="#format" class="menu-link hover:text-ly-blue transition-colors delay-100" onclick="toggleMobileMenu()">Format</a>
+            <a href="#gallery" class="menu-link hover:text-ly-coral transition-colors delay-200" onclick="toggleMobileMenu()">Gallery</a>
+            <a href="#philosophy" class="menu-link hover:text-ly-yellow transition-colors delay-300" onclick="toggleMobileMenu()">Philosophy</a>
+            <a href="#contacts" class="menu-link mt-8 bg-ly-blue text-white px-8 py-4 text-xl rounded-full shadow-brutal delay-400" onclick="toggleMobileMenu()">Free Trial</a>
+        </div>
+    </div>
+
+    <!-- 01: HERO SECTION (Light Zone) -->
+    <section class="relative min-h-[100svh] flex flex-col justify-center pt-24 pb-16 px-4 sm:px-6 lg:px-12 z-10 zone-trigger" data-theme="light">
+        <div class="max-w-[90rem] mx-auto w-full content-obstacle">
+            <div class="flex items-center gap-3 mb-6 pl-1 md:pl-2">
+                <div class="w-2.5 h-2.5 md:w-3 md:h-3 bg-ly-blue rounded-full animate-pulse"></div>
+                <p class="text-xs md:text-sm font-bold text-ly-blue uppercase tracking-[0.2em]">Oxford, UK</p>
+            </div>
+            
+            <h1 class="text-[17vw] md:text-[12vw] leading-[0.85] font-display font-800 tracking-tighter text-ly-dark uppercase mix-blend-darken relative z-10 break-words">
+                Bilingual<br>
+                <span class="text-outline">Creative</span><br>
+                Education
+            </h1>
+            
+            <div class="mt-12 md:mt-16 grid lg:grid-cols-3 gap-8 lg:gap-24 items-end">
+                <div class="lg:col-span-1 relative group w-full max-w-sm mx-auto lg:max-w-none">
+                    <div class="absolute inset-0 bg-ly-yellow translate-x-2 translate-y-2 md:translate-x-3 md:translate-y-3 -z-10 rounded-2xl md:rounded-3xl border-2 border-ly-dark/20"></div>
+                    <!-- Added loading="lazy" for mobile performance -->
+                    <img src="https://optim.tildacdn.one/tild3361-3963-4234-a665-326434626537/-/format/webp/RG_september_2020156.jpg.webp" alt="Kids learning" class="w-full h-56 md:h-72 object-cover rounded-2xl md:rounded-3xl grayscale group-hover:grayscale-0 transition-all duration-700 border-2 border-ly-dark/10 shadow-sm relative z-10">
+                </div>
+                <div class="lg:col-span-2">
+                    <p class="text-lg sm:text-xl md:text-3xl font-medium leading-tight max-w-3xl border-l-2 border-ly-dark/20 pl-6 md:pl-8 text-gray-800">
+                        An intellectual and creative space for Russian-speaking children (2.5 - 14 yrs). We help them become fully bilingual through exploring the world, communication, and art.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 02: FORMAT SECTION (Electric Blue Zone) -->
+    <section id="format" class="py-20 md:py-32 bg-ly-blue relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="blue">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle">
+            <div class="flex flex-col lg:flex-row justify-between lg:items-end mb-16 md:mb-24 border-b-2 border-white/20 pb-8 md:pb-12 gap-8">
+                <h2 class="text-5xl sm:text-6xl md:text-8xl font-display font-800 text-white tracking-tighter uppercase leading-[0.9]">
+                    The<br>Format
+                </h2>
+                <p class="text-lg md:text-xl text-white max-w-sm font-medium leading-relaxed bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 border border-white/20">
+                    Sundays. Groups of 6-12. <br>4-5 subjects combining academic rigor with creative freedom.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                <!-- Cards adjusted for mobile touch areas -->
+                <div class="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
+                    <span class="text-5xl md:text-6xl font-display font-800 text-ly-blue opacity-30 group-hover:opacity-100 transition-opacity">01</span>
+                    <h3 class="text-2xl md:text-3xl font-display font-800 mt-8 md:mt-12 mb-3 md:mb-4 uppercase">Russian</h3>
+                    <p class="text-gray-600 font-medium text-sm md:text-base">Speaking, reading, writing, and literature tailored for active bilinguals.</p>
+                </div>
+                <div class="bg-ly-yellow p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
+                    <span class="text-5xl md:text-6xl font-display font-800 text-ly-dark opacity-30 group-hover:opacity-100 transition-opacity">02</span>
+                    <h3 class="text-2xl md:text-3xl font-display font-800 mt-8 md:mt-12 mb-3 md:mb-4 uppercase">Math</h3>
+                    <p class="text-gray-800 font-medium text-sm md:text-base">Logic puzzles, arithmetic, and problem-solving via Russian methodology.</p>
+                </div>
+                <div class="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
+                    <span class="text-5xl md:text-6xl font-display font-800 text-ly-blue opacity-30 group-hover:opacity-100 transition-opacity">03</span>
+                    <h3 class="text-2xl md:text-3xl font-display font-800 mt-8 md:mt-12 mb-3 md:mb-4 uppercase">Science</h3>
+                    <p class="text-gray-600 font-medium text-sm md:text-base">Experiments, natural world, biology, and foundational physics.</p>
+                </div>
+                <div class="bg-ly-coral p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer text-white">
+                    <span class="text-5xl md:text-6xl font-display font-800 text-white opacity-40 group-hover:opacity-100 transition-opacity">04</span>
+                    <h3 class="text-2xl md:text-3xl font-display font-800 mt-8 md:mt-12 mb-3 md:mb-4 uppercase text-white">Arts</h3>
+                    <p class="text-white/90 font-medium text-sm md:text-base">Painting, theatrical performances, music, and emotional intellect.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 03: PROACTIVE EDITORIAL MARQUEE (Coral Zone) -->
+    <section id="gallery" class="py-20 md:py-32 bg-ly-coral relative z-10 zone-trigger overflow-hidden" data-theme="coral">
+        
+        <div class="px-4 sm:px-6 lg:px-12 mb-12 md:mb-20 content-obstacle max-w-[90rem] mx-auto">
+            <h2 class="text-[15vw] md:text-[10vw] leading-none font-display font-800 tracking-tighter uppercase text-outline-white mix-blend-overlay">
+                Moments
+            </h2>
+        </div>
+
+        <!-- Marquee Wrapper -->
+        <div class="marquee-wrapper flex flex-col gap-4 md:gap-8 w-full">
+            
+            <!-- Track 1 (Moves Left) -->
+            <div class="track-left pl-4 md:pl-8">
+                <!-- Group 1 -->
+                <div class="flex gap-4 md:gap-8 pr-4 md:pr-8">
+                    <!-- Adjusted viewport widths for mobile, making them distinct cards -->
+                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3138-6530-4339-b662-646139303938/-/format/webp/2022-081.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild6266-3132-4436-b965-396232663261/-/format/webp/2023-001.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-square relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3631-6363-4533-b462-363463636330/-/format/webp/2022-090.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3166-3336-4830-a138-333830383365/-/format/webp/20210515-_MG_7092.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                </div>
+                <!-- Group 2 (Duplicate for infinite loop) -->
+                <div class="flex gap-4 md:gap-8 pr-4 md:pr-8">
+                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3138-6530-4339-b662-646139303938/-/format/webp/2022-081.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild6266-3132-4436-b965-396232663261/-/format/webp/2023-001.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-square relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3631-6363-4533-b462-363463636330/-/format/webp/2022-090.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3166-3336-4830-a138-333830383365/-/format/webp/20210515-_MG_7092.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Track 2 (Moves Right) -->
+            <div class="track-right pl-4 md:pl-8">
+                <!-- Group 1 -->
+                <div class="flex gap-4 md:gap-8 pr-4 md:pr-8">
+                     <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3261-3661-4338-a433-633034363262/-/format/webp/2023-030.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-[4/5] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3037-3030-4335-b965-623561623962/-/format/webp/2023-003.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild6635-3532-4334-b439-636431323032/-/format/webp/DSC03603.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3231-6532-4730-b633-613866336331/-/format/webp/_MG_6159.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                </div>
+                <!-- Group 2 -->
+                <div class="flex gap-4 md:gap-8 pr-4 md:pr-8">
+                     <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3261-3661-4338-a433-633034363262/-/format/webp/2023-030.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-[4/5] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3037-3030-4335-b965-623561623962/-/format/webp/2023-003.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild6635-3532-4334-b439-636431323032/-/format/webp/DSC03603.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3231-6532-4730-b633-613866336331/-/format/webp/_MG_6159.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 04: PHILOSOPHY ACCORDION (Yellow Zone) -->
+    <section id="philosophy" class="py-20 md:py-32 bg-ly-yellow relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="yellow">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle">
+            <h2 class="text-5xl sm:text-6xl md:text-8xl font-display font-800 text-ly-dark tracking-tighter uppercase mb-10 md:mb-16 leading-[0.9]">
+                Why we<br>succeed
+            </h2>
+
+            <div class="border-t-2 border-ly-dark/30">
+                <!-- Accordion 1 -->
+                <div class="border-b-2 border-ly-dark/30 hover:bg-white/40 transition-colors">
+                    <button class="acc-trigger w-full py-6 md:py-10 flex justify-between items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <span class="text-2xl sm:text-3xl md:text-5xl font-display font-800 uppercase tracking-tight w-4/5 text-gray-900 pr-4">Environment & Overlap</span>
+                        <svg class="acc-arrow w-8 h-8 md:w-10 md:h-10 transition-transform duration-500 text-gray-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                    <div class="acc-content">
+                        <p class="pb-6 md:pb-10 text-base sm:text-lg md:text-2xl font-medium max-w-4xl leading-relaxed text-gray-800">
+                            We create an immersive environment where subjects overlap. The vocabulary learned in Science is reinforced in Art and Russian, mirroring natural language acquisition rather than isolated memorization.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Accordion 2 -->
+                <div class="border-b-2 border-ly-dark/30 hover:bg-white/40 transition-colors">
+                    <button class="acc-trigger w-full py-6 md:py-10 flex justify-between items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <span class="text-2xl sm:text-3xl md:text-5xl font-display font-800 uppercase tracking-tight w-4/5 text-gray-900 pr-4">Meaningful Contacts</span>
+                        <svg class="acc-arrow w-8 h-8 md:w-10 md:h-10 transition-transform duration-500 text-gray-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                    <div class="acc-content">
+                        <p class="pb-6 md:pb-10 text-base sm:text-lg md:text-2xl font-medium max-w-4xl leading-relaxed text-gray-800">
+                            Small group sizes (6-12) ensure personalized attention. We foster deep connections between peers and teachers, building the emotional confidence necessary for uninhibited speaking.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Accordion 3 -->
+                <div class="border-b-2 border-ly-dark/30 hover:bg-white/40 transition-colors">
+                    <button class="acc-trigger w-full py-6 md:py-10 flex justify-between items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <span class="text-2xl sm:text-3xl md:text-5xl font-display font-800 uppercase tracking-tight w-4/5 text-gray-900 pr-4">Positive Vibes</span>
+                        <svg class="acc-arrow w-8 h-8 md:w-10 md:h-10 transition-transform duration-500 text-gray-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                    <div class="acc-content">
+                        <p class="pb-6 md:pb-10 text-base sm:text-lg md:text-2xl font-medium max-w-4xl leading-relaxed text-gray-800">
+                            A warm, welcoming atmosphere where making mistakes is celebrated as part of the process. We ensure children associate the Russian language with joy, play, and creativity.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 05: FOOTER (Dark Zone) -->
+    <footer id="contacts" class="bg-ly-dark text-white pt-20 md:pt-32 pb-12 relative z-10 zone-trigger" data-theme="dark">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle">
+            <h2 class="text-[18vw] md:text-[10vw] leading-none font-display font-800 tracking-tighter uppercase mb-10 md:mb-12 text-outline-white hover:text-white transition-colors cursor-pointer break-words">
+                Say Hello
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12 border-t-2 border-white/20 pt-8 md:pt-12">
+                <div>
+                    <p class="text-xl md:text-2xl font-bold mb-1 md:mb-2">1 Bardwell Road</p>
+                    <p class="text-lg md:text-xl text-gray-400 mb-6 md:mb-8">Oxford, OX2 6SU</p>
+                    <a href="mailto:russianlyceumoxford@gmail.com" class="text-base sm:text-lg md:text-xl underline decoration-2 underline-offset-8 hover:text-ly-coral transition-colors break-all">
+                        russianlyceumoxford@gmail.com
+                    </a>
+                </div>
+                <div class="md:text-right flex flex-col items-start md:items-end">
+                    <p class="text-lg md:text-xl text-gray-400 mb-1 md:mb-2">WhatsApp</p>
+                    <p class="text-xl md:text-2xl font-bold mb-8">+44 7835 734 572</p>
+                    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-xs md:text-sm font-bold uppercase tracking-widest text-ly-yellow hover:text-white transition-colors bg-white/5 rounded-full px-5 py-2.5 md:px-6 md:py-3 border border-ly-yellow/30 hover:border-ly-yellow">
+                        Back to top &uarr;
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-16 md:mt-24 text-xs md:text-sm text-gray-500 font-bold flex flex-col md:flex-row justify-between items-center md:items-start uppercase tracking-wider gap-4 text-center">
+                <span>© 2024 Russian Lyceum Oxford</span>
+                <span>Bilingual Education</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LIGHTBOX OVERLAY -->
+    <div id="lightbox" class="fixed inset-0 z-[100] bg-ly-dark/95 backdrop-blur-md hidden flex-col items-center justify-center p-2 sm:p-4 lg:p-12 opacity-0 transition-opacity duration-300">
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 lg:top-10 lg:right-10 w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-full flex items-center justify-center text-ly-dark hover:bg-ly-coral hover:text-white transition-colors shadow-lg z-[101]">
+            <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="relative w-full max-w-6xl max-h-full bg-white p-2 sm:p-4 lg:p-6 pb-10 sm:pb-12 lg:pb-16 rounded-sm shadow-brutal-intense flex flex-col items-center transform scale-95 transition-transform duration-300" id="lightbox-content">
+            <img id="lightbox-img" src="" class="w-full h-auto max-h-[80vh] object-contain bg-gray-100">
+        </div>
+    </div>
+
+    <!-- INTERACTIVE SCRIPTS -->
+    <script>
+        // --- Mobile Menu Logic ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const spans = mobileMenuBtn.querySelectorAll('span');
+        let menuOpen = false;
+
+        function toggleMobileMenu() {
+            menuOpen = !menuOpen;
+            if(menuOpen) {
+                mobileMenu.classList.add('open');
+                document.body.style.overflow = 'hidden';
+                spans[0].style.transform = 'translateY(8px) rotate(45deg)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'translateY(-8px) rotate(-45deg)';
+            } else {
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = '';
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        }
+        mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+
+        // --- Masthead Hide/Show Logic ---
+        let lastScrollTop = 0;
+        const masthead = document.getElementById('masthead');
+        
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // Downscroll - only hide if menu isn't open
+                if(!menuOpen) masthead.style.transform = 'translateY(-100%)';
+            } else {
+                // Upscroll
+                masthead.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = scrollTop;
+        }, { passive: true });
+
+        // --- Brutalist Accordion Logic ---
+        function toggleAcc(btn) {
+            const content = btn.nextElementSibling;
+            const isActive = btn.classList.contains('active');
+            
+            document.querySelectorAll('.acc-trigger').forEach(b => {
+                b.classList.remove('active');
+                b.nextElementSibling.style.maxHeight = null;
+            });
+
+            if (!isActive) {
+                btn.classList.add('active');
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        }
+
+        // --- Lightbox Logic ---
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxContent = document.getElementById('lightbox-content');
+
+        document.querySelectorAll('.editorial-image').forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightbox.classList.remove('hidden');
+                lightbox.classList.add('flex');
+                void lightbox.offsetWidth; // Reflow
+                lightbox.classList.remove('opacity-0');
+                lightboxContent.classList.remove('scale-95');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        function closeLightbox() {
+            lightbox.classList.add('opacity-0');
+            lightboxContent.classList.add('scale-95');
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+                lightbox.classList.remove('flex');
+                if(!menuOpen) document.body.style.overflow = ''; 
+            }, 300);
+        }
+
+        lightbox.addEventListener('click', (e) => {
+            if(e.target === lightbox) closeLightbox();
+        });
+
+        // --- Intersection Observer for Scroll-Based "Hover" on Mobile ---
+        // This makes images pop into full color when scrolled into the center of the viewport
+        if (window.matchMedia("(hover: none)").matches) {
+            const imageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                    } else {
+                        entry.target.classList.remove('in-view');
+                    }
+                });
+            }, {
+                root: null,
+                threshold: 0.6, // Triggers when 60% of the image is visible
+                rootMargin: "-10% 0px -10% 0px" // Focuses on the middle of the screen
+            });
+
+            document.querySelectorAll('.image-container').forEach(container => {
+                imageObserver.observe(container);
+            });
+        }
+
+
+        // --- Dynamic Ambient Boat & Wave Physics (Mobile Optimized) ---
+        const boat = document.getElementById('sailing-boat');
+        const canvas = document.getElementById('boat-trail');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let trail = [];
+        let frameCount = 0;
+        let isMobile = false;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            isMobile = width < 768;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let px = width / 2;
+        let py = height * 0.3; 
+        let vx = (Math.random() > 0.5 ? 1 : -1) * 0.8; 
+        let vy = 0.5; 
+        
+        let MAX_SPEED = 1.3; 
+        const AVOID_RADIUS = isMobile ? 80 : 120; // Tighter hitboxes on mobile
+        const MARGIN = isMobile ? 20 : 40; 
+        
+        const obstacleNodes = document.querySelectorAll('.content-obstacle');
+        const zoneTriggers = document.querySelectorAll('.zone-trigger');
+
+        function updateBoat() {
+            frameCount++;
+            let ax = 0;
+            let ay = 0;
+
+            // 1. Obstacle Avoidance
+            obstacleNodes.forEach(obs => {
+                const rect = obs.getBoundingClientRect();
+                if (rect.top > height + 200 || rect.bottom < -200) return;
+
+                const closestX = Math.max(rect.left, Math.min(px, rect.right));
+                const closestY = Math.max(rect.top, Math.min(py, rect.bottom));
+                
+                const dx = px - closestX;
+                const dy = py - closestY;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                if (dist < AVOID_RADIUS && dist > 0.1) {
+                    const force = Math.pow(1 - (dist / AVOID_RADIUS), 2); 
+                    ax += (dx / dist) * force * (isMobile ? 0.25 : 0.18); // Push harder on mobile
+                    ay += (dy / dist) * force * (isMobile ? 0.2 : 0.12); 
+                }
+            });
+
+            // 2. Viewport Catchup (Crucial for mobile scrolling)
+            // If the boat gets left too far up or down by user scrolling, gently pull it back to the visible viewport
+            if (py < -50) ay += 0.15; // Boat is above viewport
+            if (py > height + 50) ay -= 0.15; // Boat is below viewport
+
+            // Viewport Bounding
+            if (px < MARGIN) ax += 0.05; 
+            if (px > width - MARGIN) ax -= 0.05; 
+            if (py < MARGIN) ay += 0.03;
+            if (py > height - MARGIN) ay -= 0.03;
+
+            if (px < 0) { px = 0; vx = Math.abs(vx) + 0.5; }
+            if (px > width) { px = width; vx = -Math.abs(vx) - 0.5; }
+            if (py < -100) { py = -100; vy = Math.abs(vy) + 0.5; }
+            if (py > height + 100) { py = height + 100; vy = -Math.abs(vy) - 0.5; }
+
+            // 3. True Wave Physics
+            ax += (Math.random() - 0.5) * 0.015; 
+            
+            const waveFreq = 0.012;
+            const waveAmp = 0.02;
+            ay += Math.sin(frameCount * waveFreq) * waveAmp;
+            ay += Math.sin(frameCount * 0.003) * 0.015;
+
+            vx += ax;
+            vy += ay;
+            vy *= 0.95; 
+
+            MAX_SPEED = isMobile ? 1.8 : 1.3; // Allow slightly faster catchup on mobile
+            const speed = Math.sqrt(vx*vx + vy*vy);
+            if (speed > MAX_SPEED) {
+                vx = (vx / speed) * MAX_SPEED;
+                vy = (vy / speed) * MAX_SPEED;
+            } else if (speed < 0.3) { 
+                vx *= 1.05;
+                vy *= 1.05;
+            }
+
+            px += vx;
+            py += vy;
+
+            // --- SPATIAL COLOR AWARENESS ---
+            let currentTheme = 'light'; 
+            zoneTriggers.forEach(zone => {
+                const rect = zone.getBoundingClientRect();
+                // Check if the center of the viewport (roughly where the boat aims) is in the zone
+                if (height/2 > rect.top && height/2 < rect.bottom) {
+                    currentTheme = zone.getAttribute('data-theme');
+                }
+            });
+
+            let wakeColorPrefix = 'rgba(0, 71, 255, '; 
+            
+            switch(currentTheme) {
+                case 'blue':
+                case 'coral':
+                case 'dark':
+                    boat.style.filter = 'brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.2))';
+                    wakeColorPrefix = 'rgba(255, 255, 255, ';
+                    break;
+                case 'yellow':
+                    boat.style.filter = 'brightness(0) drop-shadow(0 2px 4px rgba(0,0,0,0.1))';
+                    wakeColorPrefix = 'rgba(17, 17, 17, ';
+                    break;
+                case 'light':
+                default:
+                    boat.style.filter = 'brightness(0) saturate(100%) invert(20%) sepia(90%) saturate(6000%) hue-rotate(215deg) brightness(100%) contrast(105%) drop-shadow(0 2px 4px rgba(0,71,255,0.2))';
+                    wakeColorPrefix = 'rgba(0, 71, 255, ';
+                    break;
+            }
+
+            const flip = vx < 0 ? -1 : 1;
+            const tilt = vy * 18 * flip; 
+            boat.style.transform = `translate(${px}px, ${py}px) scaleX(${flip}) rotate(${tilt}deg)`;
+
+            // --- DRAW WAKE ---
+            // Draw fewer wake particles on mobile to save battery
+            const wakeInterval = isMobile ? 15 : 10;
+            if (frameCount % wakeInterval === 0) {
+                const tailOffset = isMobile ? 45 : 65;
+                const tailX = px + (tailOffset * flip); 
+                const tailY = py + tailOffset; 
+                trail.push({ x: tailX, y: tailY, alpha: 0.8, colorPrefix: wakeColorPrefix });
+            }
+
+            ctx.clearRect(0, 0, width, height);
+            
+            for (let i = trail.length - 1; i >= 0; i--) {
+                const p = trail[i];
+                p.alpha -= isMobile ? 0.005 : 0.003; // Fade faster on mobile
+                
+                if (p.alpha <= 0) {
+                    trail.splice(i, 1);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, isMobile ? 2 : 2.5, 0, Math.PI * 2);
+                    ctx.fillStyle = `${p.colorPrefix}${p.alpha})`; 
+                    ctx.fill();
+                }
+            }
+
+            requestAnimationFrame(updateBoat);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => requestAnimationFrame(updateBoat), 200);
+        });
+    </script>
+</body>
+</html>
