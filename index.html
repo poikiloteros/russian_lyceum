@@ -72,7 +72,7 @@
             height: 100%;
         }
 
-        /* Hero Animations */
+        /* Hero Animations tied to .loaded state */
         @keyframes slideUpFade {
             0% { opacity: 0; transform: translateY(60px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -82,9 +82,14 @@
             50% { opacity: 1; transform: scale(1.1) rotate(2deg); }
             100% { opacity: 1; transform: scale(1) rotate(-6deg); }
         }
-        .reveal-1 { opacity: 0; animation: slideUpFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.1s; }
-        .reveal-3 { opacity: 0; animation: slideUpFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.3s; }
-        .reveal-marker { opacity: 0; animation: markerReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; animation-delay: 0.8s; }
+        
+        .reveal-1, .reveal-3, .reveal-marker {
+            opacity: 0;
+            animation-play-state: paused;
+        }
+        body.loaded .reveal-1 { animation: slideUpFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.1s; }
+        body.loaded .reveal-3 { animation: slideUpFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.3s; }
+        body.loaded .reveal-marker { animation: markerReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; animation-delay: 0.8s; }
 
         /* Universal Scroll Reveal */
         .scroll-reveal {
@@ -103,10 +108,10 @@
             pointer-events: none; z-index: 20;
         }
         #sailing-boat {
-            position: fixed; width: 90px; pointer-events: none; z-index: 20; 
+            position: fixed; width: 100px; pointer-events: none; z-index: 21; 
             will-change: transform, filter; transform-origin: center center;
         }
-        @media (min-width: 768px) { #sailing-boat { width: 130px; } }
+        @media (min-width: 768px) { #sailing-boat { width: 140px; } }
 
         /* Marquee */
         @keyframes marquee-l { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -150,15 +155,23 @@
 </head>
 <body class="antialiased relative selection:bg-ly-blue selection:text-white">
 
+    <!-- PRELOADER -->
+    <div id="preloader" class="fixed inset-0 z-[9999] bg-ly-light flex flex-col items-center justify-center transition-all duration-1000 ease-in-out">
+        <div class="w-20 h-20 md:w-24 md:h-24 animate-pulse relative">
+            <div class="logo-mask bg-oxford-blue"></div>
+        </div>
+    </div>
+
     <!-- Ambient Canvas & Boat -->
     <canvas id="boat-trail"></canvas>
+    <!-- Boat starts entirely hidden (opacity 0) -->
     <img id="sailing-boat" src="https://res.cloudinary.com/dp3g7dyx9/image/upload/v1774169121/logo_traced_no_white_filling_nxxhyj.png" alt="Sailing Boat" style="opacity: 0;">
 
     <!-- Invisible Hover Zone for Header Dropdown -->
     <div id="header-hover-zone" class="fixed top-0 left-0 w-full h-24 z-40 hidden md:block pointer-events-auto"></div>
 
     <!-- Masthead -->
-    <nav id="masthead" class="fixed top-0 left-0 w-full z-[60] bg-ly-light/95 backdrop-blur-sm border-b-2 border-ly-dark/10 transition-transform duration-500 will-change-transform -translate-y-full md:-translate-y-0">
+    <nav id="masthead" class="fixed top-0 left-0 w-full z-[60] bg-ly-light/95 backdrop-blur-sm border-b-2 border-ly-dark/10 transition-transform duration-500 will-change-transform -translate-y-full">
         <div class="max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-12 h-16 md:h-20 flex justify-between items-center relative z-10">
             <a href="#" class="flex items-center gap-2 md:gap-3 group">
                 <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative" id="header-logo-container">
@@ -201,28 +214,33 @@
 
     <!-- 01: HERO SECTION (Green Impact Zone) -->
     <!-- Heights and layout adjusted for proper desktop fitting without massive scroll -->
-    <section class="relative min-h-[100svh] flex flex-col justify-center pt-20 pb-12 px-4 sm:px-6 lg:px-12 z-10 zone-trigger overflow-hidden bg-ly-green" data-theme="green">
+    <section class="relative min-h-[100svh] flex flex-col justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-12 z-10 zone-trigger overflow-hidden bg-ly-green" data-theme="green">
         <div class="max-w-[90rem] mx-auto w-full content-obstacle relative z-30">
             <div class="flex items-center gap-3 mb-6 md:mb-10 pl-1 md:pl-2">
                 <div class="w-2.5 h-2.5 md:w-3 md:h-3 bg-ly-blue rounded-full animate-pulse"></div>
                 <p class="text-xs md:text-sm font-bold text-ly-dark uppercase tracking-[0.2em] font-sans">Оксфорд, Великобритания</p>
             </div>
             
-            <div class="flex flex-col select-none relative z-20">
-                <!-- Text scaling adjusted perfectly to fit within 100vw across mobile screens (8.5vw * 11 chars < 100vw) -->
-                <h1 class="reveal-1 text-[8.5vw] md:text-[7vw] lg:text-[5.5rem] xl:text-[6.5rem] leading-[0.9] font-display font-900 tracking-tighter text-ly-dark uppercase relative z-10">
+            <!-- Hero Text Block: Uses dedicated spacer divs to absolutely prevent cramping or overlaps -->
+            <div class="flex flex-col select-none relative z-20 w-full mt-2">
+                <h1 class="reveal-1 text-[9.5vw] md:text-[8vw] lg:text-[6.5rem] xl:text-[7.5rem] leading-none font-display font-900 tracking-tighter text-ly-dark uppercase relative z-10">
                     ДВУЯЗЫЧНОЕ
                 </h1>
-                <h1 class="reveal-marker text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[8rem] leading-[0.8] font-marker text-ly-blue mt-1 mb-2 ml-[3vw] relative z-30 drop-shadow-md transform -rotate-3">
-                    творческое
-                </h1>
-                <h1 class="reveal-3 text-[8.5vw] md:text-[7vw] lg:text-[5.5rem] xl:text-[6.5rem] leading-[0.9] font-display font-900 tracking-tighter text-outline uppercase relative z-20">
+                
+                <!-- Spacer div giving 'творческое' exact breathing room -->
+                <div class="relative w-full h-[15vw] sm:h-[12vw] lg:h-[7.5rem] flex items-center">
+                    <h1 class="reveal-marker absolute left-[2%] text-[17vw] sm:text-[14vw] lg:text-[9.5rem] leading-none font-marker text-ly-blue drop-shadow-md transform -rotate-3 z-30">
+                        творческое
+                    </h1>
+                </div>
+
+                <h1 class="reveal-3 text-[9.5vw] md:text-[8vw] lg:text-[6.5rem] xl:text-[7.5rem] leading-none font-display font-900 tracking-tighter text-outline uppercase relative z-20">
                     ОБРАЗОВАНИЕ
                 </h1>
             </div>
             
-            <div class="mt-8 lg:mt-12 grid lg:grid-cols-3 gap-8 lg:gap-24 items-end relative z-30">
-                <!-- Image container class added so observer handles demasking uniformly -->
+            <div class="mt-10 lg:mt-16 grid lg:grid-cols-3 gap-8 lg:gap-24 items-end relative z-30">
+                <!-- Image container class triggers demasking uniformly -->
                 <div class="lg:col-span-1 relative group w-full max-w-sm mx-auto lg:max-w-none reveal-3 image-container" style="animation-delay: 0.6s;">
                     <div class="absolute inset-0 bg-white translate-x-2 translate-y-2 md:translate-x-3 md:translate-y-3 -z-10 rounded-2xl md:rounded-3xl border-2 border-ly-dark/20"></div>
                     <img src="https://optim.tildacdn.one/tild3361-3963-4234-a665-326434626537/-/format/webp/RG_september_2020156.jpg.webp" alt="Kids learning" class="editorial-image w-full h-56 md:h-72 object-cover rounded-2xl md:rounded-3xl border-2 border-ly-dark/10 shadow-sm relative z-10">
@@ -237,11 +255,9 @@
     </section>
 
     <!-- 02: FORMAT SECTION (Electric Blue Zone) -->
-    <!-- Reduced global padding to tighten zones (py-16 lg:py-24) -->
     <section id="format" class="py-16 lg:py-24 bg-ly-blue relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="blue">
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
             <div class="flex flex-col lg:flex-row justify-between lg:items-end mb-12 md:mb-20 border-b-2 border-white/20 pb-8 md:pb-12 gap-8 scroll-reveal">
-                <!-- Fixed huge scaling to fit nicely -->
                 <h2 class="fill-on-scroll text-[10vw] sm:text-6xl md:text-7xl lg:text-8xl font-display font-900 tracking-tighter uppercase leading-[0.9] text-outline-white text-transparent hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-default">
                     НАШ<br>ФОРМАТ
                 </h2>
@@ -506,7 +522,6 @@
     <!-- 05: TIMETABLE ACCORDION (Oxford Blue Zone) -->
     <section id="timetable" class="py-16 lg:py-24 bg-oxford-blue relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="dark">
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
-            <!-- Text scaling fixed to fit tiny mobile screens perfectly -->
             <h2 class="scroll-reveal fill-on-scroll text-[9vw] sm:text-6xl md:text-7xl lg:text-8xl font-display font-900 tracking-tighter uppercase mb-10 md:mb-16 leading-[0.9] text-outline-white text-transparent hover:text-ly-yellow [&.in-view]:text-ly-yellow transition-colors duration-500 cursor-default">
                 РАСПИСАНИЕ
             </h2>
@@ -791,7 +806,6 @@
     <!-- 08: FOOTER (Dark Zone) -->
     <footer id="contacts" class="bg-ly-dark text-white pt-20 md:pt-32 pb-12 relative z-10 zone-trigger" data-theme="dark">
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
-            <!-- Text scaling fixed -->
             <h2 class="fill-on-scroll text-[10vw] sm:text-[9vw] lg:text-[7rem] leading-none font-display font-900 tracking-tighter uppercase mb-10 md:mb-12 text-outline-white text-transparent hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-pointer break-words">
                 СВЯЗАТЬСЯ
             </h2>
@@ -844,6 +858,28 @@
 
     <!-- INTERACTIVE SCRIPTS -->
     <script>
+        // --- Preloader & Initialization Sequence ---
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            
+            // Fade out preloader
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                preloader.style.pointerEvents = 'none';
+                
+                // Add .loaded to trigger hero animations
+                setTimeout(() => {
+                    document.body.classList.add('loaded');
+                }, 300); // Small pause for dramatic effect
+                
+            }, 800); // Display time for preloader
+            
+            // Trigger Boat Launch 1.5s after hero animations start
+            setTimeout(() => {
+                initBoatLaunch();
+            }, 2600); // 800 + 300 + 1500
+        });
+
         // --- Mobile Menu Logic ---
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -932,7 +968,6 @@
         }
 
         function openBio(id) {
-            // Support catching the currentTarget cleanly
             const card = event.currentTarget;
             const name = card.querySelector('h3').innerText;
             const role = card.querySelector('p').innerText;
@@ -961,9 +996,7 @@
 
         document.querySelectorAll('.editorial-image').forEach(img => {
             img.addEventListener('click', (e) => {
-                // Allow the click to bubble up if it's a team portrait so openBio() can run!
                 if(img.closest('#team')) return; 
-                
                 e.stopPropagation(); 
                 lightboxImg.src = img.src;
                 lightbox.classList.remove('hidden');
@@ -990,7 +1023,6 @@
         });
 
         // --- Consolidated Universal Intersection Observer ---
-        // Handles generic scroll-reveals, fill-on-scroll texts, AND mobile image de-masking uniformly.
         const observerOptions = {
             root: null,
             threshold: 0.25,
@@ -1007,7 +1039,6 @@
                         entry.target.classList.add('in-view');
                     }
                 } else {
-                    // Remove in-view so it can re-trigger (useful for mobile scrolling)
                     if (entry.target.classList.contains('fill-on-scroll') || entry.target.classList.contains('image-container')) {
                         entry.target.classList.remove('in-view');
                     }
@@ -1032,11 +1063,9 @@
         let boatState = 'waiting'; 
         let px = 0, py = 0;
         let lastPx = 0, lastPy = 0;
-        let boatScale = 0.2;
+        let boatScale = 1;
         let tilt = 0;
-        
-        // Hysteresis lock for boat flipping (prevents rapid glitching at curve peaks)
-        window.boatFlipLock = 1;
+        let flipX = 1;
 
         function resize() {
             width = window.innerWidth;
@@ -1050,59 +1079,59 @@
         
         const zoneTriggers = document.querySelectorAll('.zone-trigger');
 
-        // Launch Sequence
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const headerLogo = document.getElementById('header-logo-container');
-                if(headerLogo) {
-                    const rect = headerLogo.getBoundingClientRect();
-                    px = rect.left;
-                    py = rect.top;
-                    lastPx = px; lastPy = py;
-                }
+        // Launch Sequence specific logic
+        function initBoatLaunch() {
+            const headerLogo = document.getElementById('header-logo-container');
+            if(headerLogo) {
+                const rect = headerLogo.getBoundingClientRect();
+                // Set boat explicitly over the header logo
+                px = rect.left + rect.width / 2;
+                py = rect.top + rect.height / 2;
+                lastPx = px; lastPy = py;
                 
-                boatState = 'launching';
-                boat.style.opacity = 1;
-                boat.style.transition = 'transform 0.1s ease-out, filter 0.6s ease';
+                // Match size of the header logo
+                boatScale = rect.width / boat.offsetWidth; 
                 
-                setTimeout(() => {
-                    boatState = 'sailing';
-                    boat.style.transition = 'filter 0.6s ease';
-                }, 1000);
-
-            }, 1600); 
+                // Pre-apply filter to perfectly match header's Oxford Blue
+                boat.style.filter = 'brightness(0) saturate(100%) invert(13%) sepia(50%) saturate(4649%) hue-rotate(205deg) brightness(98%) contrast(98%)';
+            }
             
+            boatState = 'launching';
+            boat.style.opacity = 1;
+            boat.style.transition = 'filter 0.8s ease';
+            
+            setTimeout(() => {
+                boatState = 'sailing';
+            }, 1000);
+
             requestAnimationFrame(updateBoat);
-        });
+        }
 
         function updateBoat() {
-            if (boatState === 'waiting') {
-                requestAnimationFrame(updateBoat);
-                return;
-            }
+            if (boatState === 'waiting') return; // Do nothing until launch
 
-            // Time increment dramatically reduced for majestic, slow movement
-            time += 0.0035; 
+            time += 0.002; // Very slow and majestic progression
             
             if (boatState === 'launching') {
-                boatScale += (1 - boatScale) * 0.05;
-                px += 1.5; 
-                py += 1.0;
-                tilt = 15;
+                // Scale up smoothly to 1 (full size) while drifting right/down
+                boatScale += (1 - boatScale) * 0.03;
+                px += 1.0; 
+                py += 0.5;
+                tilt += (15 - tilt) * 0.05;
             } else if (boatState === 'sailing') {
                 boatScale = 1;
                 lastPx = px;
                 lastPy = py;
                 
-                // Sweeping, graceful Lissajous Curve
-                let baseSpeed = isMobile ? 0.3 : 0.6;
-                let dx = baseSpeed + Math.sin(time * 1.4) * (isMobile ? 1.5 : 2.5); 
-                let dy = Math.cos(time * 1.1) * (isMobile ? 1.2 : 2.0) + Math.sin(time * 0.7) * (isMobile ? 0.6 : 1.0);
+                // Sweeping, extremely wide Lissajous Curve to avoid tight loops
+                let baseSpeed = isMobile ? 0.4 : 0.8;
+                let dx = baseSpeed + Math.sin(time * 1.4) * (isMobile ? 0.8 : 1.5); 
+                let dy = Math.cos(time * 1.1) * (isMobile ? 0.8 : 1.2) + Math.sin(time * 0.7) * (isMobile ? 0.4 : 0.6);
                 
                 px += dx;
                 py += dy;
                 
-                // Screen Wrap
+                // Wide Screen Wrap
                 if (px > width + 200) px = -150;
                 if (px < -200) px = width + 150;
                 if (py > height + 200) py = -100;
@@ -1111,23 +1140,31 @@
                 let actualDx = px - lastPx;
                 let actualDy = py - lastPy;
                 
-                if (Math.abs(actualDx) < 100 && Math.abs(actualDy) < 100) {
-                    if (Math.abs(actualDx) > 0.1 || Math.abs(actualDy) > 0.1) {
-                        let targetTilt = Math.atan2(actualDy, actualDx) * (180 / Math.PI);
-                        
-                        let diff = targetTilt - tilt;
-                        while (diff < -180) diff += 360;
-                        while (diff > 180) diff -= 360;
-                        // Smoother tilt rotation to match the slower speed
-                        tilt += diff * 0.05; 
+                if (Math.abs(actualDx) > 0.05 || Math.abs(actualDy) > 0.05) {
+                    let rawAngle = Math.atan2(actualDy, actualDx) * (180 / Math.PI);
+                    let targetTilt = 0;
+
+                    // If moving left, perfectly flip it horizontally and inverse angle
+                    if (actualDx < 0) {
+                        flipX = -1;
+                        targetTilt = rawAngle > 0 ? 180 - rawAngle : -180 - rawAngle;
+                    } else {
+                        flipX = 1;
+                        targetTilt = rawAngle;
                     }
+                    
+                    // Smoothly interpolate tilt
+                    let diff = targetTilt - tilt;
+                    while (diff < -180) diff += 360;
+                    while (diff > 180) diff -= 360;
+                    tilt += diff * 0.04; 
                 }
             }
 
-            // Hysteresis: Require a deep angle commit to flip the boat upside down
-            if (tilt > 100 || tilt < -100) window.boatFlipLock = -1;
-            else if (tilt < 80 && tilt > -80) window.boatFlipLock = 1;
+            // Visual constraint: boat never looks like it's taking a nosedive
+            let visualTilt = Math.max(-45, Math.min(45, tilt));
 
+            // --- SPATIAL COLOR AWARENESS ---
             let currentTheme = 'light'; 
             zoneTriggers.forEach(zone => {
                 const rect = zone.getBoundingClientRect();
@@ -1138,34 +1175,39 @@
 
             let wakeColorPrefix = 'rgba(0, 71, 255, '; 
             
-            switch(currentTheme) {
-                case 'blue':
-                case 'coral':
-                case 'dark':
-                    boat.style.filter = 'brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.2))';
-                    wakeColorPrefix = 'rgba(255, 255, 255, ';
-                    break;
-                case 'yellow':
-                case 'green':
-                    boat.style.filter = 'brightness(0) drop-shadow(0 2px 4px rgba(0,0,0,0.1))';
-                    wakeColorPrefix = 'rgba(17, 17, 17, ';
-                    break;
-                case 'lilac':
-                case 'light':
-                default:
-                    boat.style.filter = 'brightness(0) saturate(100%) invert(13%) sepia(50%) saturate(4649%) hue-rotate(205deg) brightness(98%) contrast(98%) drop-shadow(0 2px 4px rgba(5,51,117,0.2))';
-                    wakeColorPrefix = 'rgba(5, 51, 117, ';
-                    break;
+            // Only update colors if we have officially launched
+            if (boatState === 'sailing') {
+                switch(currentTheme) {
+                    case 'blue':
+                    case 'coral':
+                    case 'dark':
+                        boat.style.filter = 'brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,0.2))';
+                        wakeColorPrefix = 'rgba(255, 255, 255, ';
+                        break;
+                    case 'yellow':
+                    case 'green':
+                        boat.style.filter = 'brightness(0) drop-shadow(0 2px 4px rgba(0,0,0,0.1))';
+                        wakeColorPrefix = 'rgba(17, 17, 17, ';
+                        break;
+                    case 'lilac':
+                    case 'light':
+                    default:
+                        boat.style.filter = 'brightness(0) saturate(100%) invert(13%) sepia(50%) saturate(4649%) hue-rotate(205deg) brightness(98%) contrast(98%) drop-shadow(0 2px 4px rgba(5,51,117,0.2))';
+                        wakeColorPrefix = 'rgba(5, 51, 117, ';
+                        break;
+                }
             }
 
-            // Apply locked flip logic
-            boat.style.transform = `translate(${px}px, ${py}px) rotate(${tilt}deg) scale(${boatScale}) scaleY(${window.boatFlipLock})`;
+            // Perfectly centered positioning
+            boat.style.transform = `translate(calc(${px}px - 50%), calc(${py}px - 50%)) rotate(${visualTilt}deg) scale(${boatScale}) scaleX(${flipX})`;
 
             // --- DRAW WAKE ---
-            if (boatState === 'sailing' && Math.random() < 0.35) {
+            if (boatState === 'sailing' && Math.random() < 0.3) {
                 if (Math.abs(px - lastPx) > 0.2 || Math.abs(py - lastPy) > 0.2) {
-                     const wakeX = px - Math.cos(tilt * Math.PI / 180) * (isMobile ? 20 : 40);
-                     const wakeY = py - Math.sin(tilt * Math.PI / 180) * (isMobile ? 20 : 40) + (isMobile ? 10 : 15);
+                     // Offset trailing wake relative to the flipped visual state
+                     const trailingOffset = flipX === 1 ? -1 : 1;
+                     const wakeX = px + Math.cos(visualTilt * Math.PI / 180) * (isMobile ? 25 : 45) * trailingOffset;
+                     const wakeY = py + Math.sin(visualTilt * Math.PI / 180) * (isMobile ? 25 : 45) * trailingOffset + (isMobile ? 10 : 15);
                      trail.push({ x: wakeX, y: wakeY, alpha: 0.6, colorPrefix: wakeColorPrefix });
                 }
             }
