@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth bg-[#F4F4F6]">
+<html lang="ru" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Russian Lyceum Oxford | Bold Redesign</title>
+    <title>Русский Лицей Оксфорд | Russian Lyceum Oxford</title>
     
-    <!-- Google Fonts: Bricolage Grotesque (Bold/Display) & DM Sans (Body) -->
+    <!-- Google Fonts: Unbounded (Display), Caveat (Marker/Brush), Manrope (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Manrope:wght@400;500;700;800&family=Unbounded:wght@400;800;900&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,21 +17,26 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['"DM Sans"', 'sans-serif'],
-                        display: ['"Bricolage Grotesque"', 'sans-serif'],
+                        sans: ['"Manrope"', 'sans-serif'],
+                        display: ['"Unbounded"', 'sans-serif'],
+                        marker: ['"Caveat"', 'cursive'],
                     },
                     colors: {
                         'ly-blue': '#0047FF',    /* Electric Blue */
                         'ly-coral': '#FF3366',   /* Vibrant Coral/Red */
                         'ly-yellow': '#FFD600',  /* High-impact Yellow */
+                        'ly-green': '#00E56A',   /* Neo-pop Green */
+                        'ly-lilac': '#E0D4FF',   /* Muted Neo-Pop Lilac */
                         'ly-dark': '#111111',    /* Near Black */
                         'ly-light': '#F4F4F6',   /* Off White */
+                        'oxford-blue': '#053375',/* Oxford Deep Blue */
                     },
                     boxShadow: {
-                        /* Softened Neo-Brutalist Shadows */
                         'brutal': '8px 8px 0px 0px rgba(17,17,17,0.12)',
                         'brutal-hover': '12px 12px 0px 0px rgba(17,17,17,0.18)',
                         'brutal-intense': '12px 12px 0px 0px rgba(17,17,17,0.8)',
+                        'brutal-solid': '6px 6px 0px 0px rgba(17,17,17,1)',
+                        'brutal-solid-hover': '10px 10px 0px 0px rgba(17,17,17,1)',
                     }
                 }
             }
@@ -42,170 +47,136 @@
         body {
             overflow-x: hidden;
             color: #111;
-            /* Prevent overscroll bounce on mobile for a cleaner app feel */
             overscroll-behavior-y: none; 
+            background-color: #F4F4F6;
         }
 
         /* Typography Utilities */
         .text-outline {
             color: transparent;
-            -webkit-text-stroke: 1.5px #111;
+            -webkit-text-stroke: 2px #111;
         }
         .text-outline-white {
             color: transparent;
             -webkit-text-stroke: 1.5px #fff;
         }
 
-        /* The Canvas for the Wake */
+        /* Logo Masking */
+        .logo-mask {
+            -webkit-mask-image: url('https://res.cloudinary.com/dp3g7dyx9/image/upload/v1774169121/logo_traced_no_white_filling_nxxhyj.png');
+            -webkit-mask-size: contain;
+            -webkit-mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            background-color: #053375; 
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Hero Animations */
+        @keyframes slideUpFade {
+            0% { opacity: 0; transform: translateY(60px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes markerReveal {
+            0% { opacity: 0; transform: scale(0.5) rotate(-15deg); }
+            50% { opacity: 1; transform: scale(1.1) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(-6deg); }
+        }
+        .reveal-1 { opacity: 0; animation: slideUpFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.1s; }
+        .reveal-3 { opacity: 0; animation: slideUpFade 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.3s; }
+        .reveal-marker { opacity: 0; animation: markerReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; animation-delay: 0.8s; }
+
+        /* Universal Scroll Reveal */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .scroll-reveal.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Boat Canvas */
         #boat-trail {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 44; 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 20;
         }
-        
-        /* Ambient Boat Element */
         #sailing-boat {
-            position: fixed;
-            width: 90px; /* Slightly smaller for mobile scaling */
-            pointer-events: none;
-            z-index: 45; 
-            will-change: transform, filter;
-            transition: filter 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: fixed; width: 90px; pointer-events: none; z-index: 20; 
+            will-change: transform, filter; transform-origin: center center;
         }
-        @media (min-width: 768px) {
-            #sailing-boat { width: 130px; }
-        }
+        @media (min-width: 768px) { #sailing-boat { width: 130px; } }
 
-        /* Editorial Marquee Animations */
-        @keyframes marquee-l {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        @keyframes marquee-r {
-            0% { transform: translateX(-50%); }
-            100% { transform: translateX(0); }
-        }
-        
-        .track-left {
-            display: flex;
-            width: max-content;
-            animation: marquee-l 40s linear infinite;
-        }
-        .track-right {
-            display: flex;
-            width: max-content;
-            animation: marquee-r 35s linear infinite;
-        }
-        
-        /* Pause entire track on hover (Desktop only) */
+        /* Marquee */
+        @keyframes marquee-l { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes marquee-r { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+        .track-left { display: flex; width: max-content; animation: marquee-l 40s linear infinite; }
+        .track-right { display: flex; width: max-content; animation: marquee-r 35s linear infinite; }
         @media (hover: hover) {
-            .marquee-wrapper:hover .track-left,
-            .marquee-wrapper:hover .track-right {
-                animation-play-state: paused;
-            }
+            .marquee-wrapper:hover .track-left, .marquee-wrapper:hover .track-right { animation-play-state: paused; }
         }
 
-        /* Softened Editorial Image Masking */
+        /* Editorial Image Hover & Mobile Scroll View */
         .editorial-image {
-            filter: grayscale(85%) contrast(1.1);
-            mix-blend-mode: luminosity;
-            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            border: 2px solid transparent;
-            transform: scale(1);
+            filter: grayscale(85%) contrast(1.1); mix-blend-mode: luminosity;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); border: 2px solid transparent; transform: scale(1);
         }
-        
-        /* Desktop Hover state */
         @media (hover: hover) {
             .image-container:hover .editorial-image {
-                filter: grayscale(0%) contrast(1);
-                mix-blend-mode: normal;
-                transform: scale(1.02) rotate(-1deg);
-                border-color: rgba(17,17,17,0.2);
-                box-shadow: 10px 10px 0px 0px rgba(17,17,17,0.15);
-                z-index: 20;
+                filter: grayscale(0%) contrast(1); mix-blend-mode: normal;
+                transform: scale(1.02) rotate(-1deg); border-color: rgba(17,17,17,0.2);
+                box-shadow: 10px 10px 0px 0px rgba(17,17,17,0.15); z-index: 20;
             }
         }
+        .image-container.in-view .editorial-image { filter: grayscale(0%) contrast(1); mix-blend-mode: normal; }
 
-        /* Mobile Scroll-in-view state (Applied via JS IntersectionObserver) */
-        .image-container.in-view .editorial-image {
-            filter: grayscale(0%) contrast(1);
-            mix-blend-mode: normal;
-            transform: scale(1.02) rotate(-1deg);
-            border-color: rgba(17,17,17,0.2);
-            box-shadow: 6px 6px 0px 0px rgba(17,17,17,0.15);
-            z-index: 20;
-        }
+        /* Accordion */
+        .acc-content { max-height: 0; overflow: hidden; transition: max-height 0.6s cubic-bezier(0.85, 0, 0.15, 1); }
+        .acc-trigger.active .acc-arrow { transform: rotate(90deg); }
 
-        /* Custom Accordion */
-        .acc-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.6s cubic-bezier(0.85, 0, 0.15, 1);
-        }
-        
-        @media (hover: hover) {
-            .acc-trigger:hover .acc-arrow { transform: translateX(8px); }
-        }
-        .acc-trigger.active .acc-arrow {
-            transform: rotate(90deg);
-        }
-
-        /* Hide Scrollbar for cleaner look */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #F4F4F6; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
 
-        /* Mobile Nav Overlay Transition */
-        #mobile-menu {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        #mobile-menu.open {
-            opacity: 1;
-            visibility: visible;
-        }
-        #mobile-menu .menu-link {
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        #mobile-menu.open .menu-link {
-            transform: translateY(0);
-            opacity: 1;
-        }
+        #mobile-menu { transition: opacity 0.3s ease, visibility 0.3s ease; }
+        #mobile-menu.open { opacity: 1; visibility: visible; }
+        #mobile-menu .menu-link { transform: translateY(20px); opacity: 0; transition: all 0.4s ease; }
+        #mobile-menu.open .menu-link { transform: translateY(0); opacity: 1; }
     </style>
 </head>
-<body class="antialiased relative selection:bg-ly-yellow selection:text-ly-dark">
+<body class="antialiased relative selection:bg-ly-blue selection:text-white">
 
-    <!-- Ambient Background Elements (Canvas & Boat) -->
+    <!-- Ambient Canvas & Boat -->
     <canvas id="boat-trail"></canvas>
-    <img id="sailing-boat" src="https://res.cloudinary.com/dp3g7dyx9/image/upload/v1774169121/logo_traced_no_white_filling_nxxhyj.png" alt="Sailing Boat">
+    <img id="sailing-boat" src="https://res.cloudinary.com/dp3g7dyx9/image/upload/v1774169121/logo_traced_no_white_filling_nxxhyj.png" alt="Sailing Boat" style="opacity: 0;">
 
-    <!-- Softened Editorial Masthead -->
-    <nav id="masthead" class="fixed top-0 left-0 w-full z-50 bg-ly-light/95 backdrop-blur-sm border-b-2 border-ly-dark/10 transition-transform duration-500 will-change-transform">
-        <div class="max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-12 h-16 md:h-20 flex justify-between items-center">
+    <!-- Invisible Hover Zone for Header Dropdown -->
+    <div id="header-hover-zone" class="fixed top-0 left-0 w-full h-24 z-40 hidden md:block pointer-events-auto"></div>
+
+    <!-- Masthead -->
+    <nav id="masthead" class="fixed top-0 left-0 w-full z-[60] bg-ly-light/95 backdrop-blur-sm border-b-2 border-ly-dark/10 transition-transform duration-500 will-change-transform -translate-y-full md:-translate-y-0">
+        <div class="max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-12 h-16 md:h-20 flex justify-between items-center relative z-10">
             <a href="#" class="flex items-center gap-2 md:gap-3 group">
-                <div class="w-8 h-8 md:w-10 md:h-10 bg-ly-dark flex items-center justify-center text-white font-display font-800 text-xl md:text-2xl rounded-lg group-hover:bg-ly-blue group-hover:rotate-6 transition-all duration-300">L</div>
-                <span class="font-display font-800 text-xl md:text-2xl tracking-tight text-ly-dark uppercase mt-1">Lyceum</span>
+                <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 relative" id="header-logo-container">
+                    <div class="logo-mask"></div>
+                </div>
+                <span class="font-display font-800 text-lg md:text-xl tracking-tight text-oxford-blue uppercase mt-1">Russian Lyceum</span>
             </a>
             
-            <!-- Desktop Nav -->
-            <div class="hidden md:flex gap-10 text-sm font-bold uppercase tracking-widest text-ly-dark/80">
-                <a href="#format" class="hover:text-ly-blue transition-colors">Format</a>
-                <a href="#gallery" class="hover:text-ly-coral transition-colors">Gallery</a>
-                <a href="#philosophy" class="hover:text-ly-yellow transition-colors">Philosophy</a>
+            <div class="hidden md:flex gap-8 text-sm font-bold uppercase tracking-widest text-ly-dark font-display">
+                <a href="#format" class="hover:opacity-60 transition-opacity">Формат</a>
+                <a href="#team" class="hover:opacity-60 transition-opacity">Команда</a>
+                <a href="#timetable" class="hover:opacity-60 transition-opacity">Расписание</a>
+                <a href="#philosophy" class="hover:opacity-60 transition-opacity">Философия</a>
             </div>
             
             <div class="flex items-center gap-4">
-                <a href="#contacts" class="hidden sm:inline-block bg-ly-blue text-white px-6 py-2 md:px-7 md:py-2.5 text-xs md:text-sm font-bold uppercase tracking-wider rounded-full shadow-brutal hover:-translate-y-1 hover:shadow-brutal-hover transition-all duration-300">
-                    Free Trial
+                <a href="#contacts" class="hidden sm:inline-block bg-ly-blue text-white px-6 py-2 md:px-7 md:py-2.5 text-xs md:text-sm font-bold uppercase tracking-wider rounded-full shadow-brutal hover:-translate-y-1 hover:shadow-brutal-hover transition-all duration-300 font-display relative z-20">
+                    Связаться
                 </a>
                 
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden flex flex-col justify-center items-center w-10 h-10 space-y-1.5 focus:outline-none z-[60]">
+                <button id="mobile-menu-btn" class="md:hidden flex flex-col justify-center items-center w-10 h-10 space-y-1.5 focus:outline-none z-[70] relative">
                     <span class="block w-6 h-0.5 bg-ly-dark transition-transform duration-300"></span>
                     <span class="block w-6 h-0.5 bg-ly-dark transition-opacity duration-300"></span>
                     <span class="block w-6 h-0.5 bg-ly-dark transition-transform duration-300"></span>
@@ -214,39 +185,46 @@
         </div>
     </nav>
 
-    <!-- Mobile Navigation Overlay -->
-    <div id="mobile-menu" class="fixed inset-0 bg-ly-dark z-40 opacity-0 invisible flex flex-col justify-center items-center">
-        <div class="flex flex-col items-center gap-8 text-white font-display font-800 text-4xl uppercase tracking-tighter">
-            <a href="#format" class="menu-link hover:text-ly-blue transition-colors delay-100" onclick="toggleMobileMenu()">Format</a>
-            <a href="#gallery" class="menu-link hover:text-ly-coral transition-colors delay-200" onclick="toggleMobileMenu()">Gallery</a>
-            <a href="#philosophy" class="menu-link hover:text-ly-yellow transition-colors delay-300" onclick="toggleMobileMenu()">Philosophy</a>
-            <a href="#contacts" class="menu-link mt-8 bg-ly-blue text-white px-8 py-4 text-xl rounded-full shadow-brutal delay-400" onclick="toggleMobileMenu()">Free Trial</a>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 bg-ly-dark z-[55] opacity-0 invisible flex flex-col justify-center items-center">
+        <div class="flex flex-col items-center gap-8 text-white font-display font-800 text-3xl uppercase tracking-tighter">
+            <a href="#format" class="menu-link hover:text-ly-blue transition-colors delay-100" onclick="toggleMobileMenu()">Формат</a>
+            <a href="#team" class="menu-link hover:text-ly-coral transition-colors delay-200" onclick="toggleMobileMenu()">Команда</a>
+            <a href="#timetable" class="menu-link hover:text-oxford-blue transition-colors delay-300" onclick="toggleMobileMenu()">Расписание</a>
+            <a href="#philosophy" class="menu-link hover:text-ly-yellow transition-colors delay-400" onclick="toggleMobileMenu()">Философия</a>
+            <a href="#contacts" class="menu-link mt-8 bg-ly-blue text-white px-8 py-4 text-xl rounded-full shadow-brutal delay-500" onclick="toggleMobileMenu()">Связаться</a>
         </div>
     </div>
 
-    <!-- 01: HERO SECTION (Light Zone) -->
-    <section class="relative min-h-[100svh] flex flex-col justify-center pt-24 pb-16 px-4 sm:px-6 lg:px-12 z-10 zone-trigger" data-theme="light">
-        <div class="max-w-[90rem] mx-auto w-full content-obstacle">
-            <div class="flex items-center gap-3 mb-6 pl-1 md:pl-2">
+    <!-- 01: HERO SECTION (Green Impact Zone) -->
+    <section class="relative min-h-[100svh] flex flex-col justify-center pt-24 pb-20 px-4 sm:px-6 lg:px-12 z-10 zone-trigger overflow-hidden bg-ly-green" data-theme="green">
+        <div class="max-w-[90rem] mx-auto w-full content-obstacle relative z-30">
+            <div class="flex items-center gap-3 mb-8 md:mb-12 pl-1 md:pl-2">
                 <div class="w-2.5 h-2.5 md:w-3 md:h-3 bg-ly-blue rounded-full animate-pulse"></div>
-                <p class="text-xs md:text-sm font-bold text-ly-blue uppercase tracking-[0.2em]">Oxford, UK</p>
+                <p class="text-xs md:text-sm font-bold text-ly-dark uppercase tracking-[0.2em] font-sans">Оксфорд, Великобритания</p>
             </div>
             
-            <h1 class="text-[17vw] md:text-[12vw] leading-[0.85] font-display font-800 tracking-tighter text-ly-dark uppercase mix-blend-darken relative z-10 break-words">
-                Bilingual<br>
-                <span class="text-outline">Creative</span><br>
-                Education
-            </h1>
+            <div class="flex flex-col select-none relative z-20">
+                <h1 class="reveal-1 text-[13vw] md:text-[11vw] leading-[0.9] font-display font-900 tracking-tighter text-ly-dark uppercase relative z-10">
+                    ДВУЯЗЫЧНОЕ
+                </h1>
+                <!-- Spacing fixed: relaxed margins to breathe -->
+                <h1 class="reveal-marker text-[20vw] md:text-[16vw] leading-[0.8] font-marker text-ly-blue mt-1 mb-2 ml-[3vw] relative z-30 drop-shadow-md transform -rotate-3">
+                    творческое
+                </h1>
+                <h1 class="reveal-3 text-[13vw] md:text-[11vw] leading-[0.9] font-display font-900 tracking-tighter text-outline uppercase relative z-20">
+                    ОБРАЗОВАНИЕ
+                </h1>
+            </div>
             
-            <div class="mt-12 md:mt-16 grid lg:grid-cols-3 gap-8 lg:gap-24 items-end">
-                <div class="lg:col-span-1 relative group w-full max-w-sm mx-auto lg:max-w-none">
-                    <div class="absolute inset-0 bg-ly-yellow translate-x-2 translate-y-2 md:translate-x-3 md:translate-y-3 -z-10 rounded-2xl md:rounded-3xl border-2 border-ly-dark/20"></div>
-                    <!-- Added loading="lazy" for mobile performance -->
+            <div class="mt-12 md:mt-20 grid lg:grid-cols-3 gap-8 lg:gap-24 items-end relative z-30">
+                <div class="lg:col-span-1 relative group w-full max-w-sm mx-auto lg:max-w-none reveal-3" style="animation-delay: 0.6s;">
+                    <div class="absolute inset-0 bg-white translate-x-2 translate-y-2 md:translate-x-3 md:translate-y-3 -z-10 rounded-2xl md:rounded-3xl border-2 border-ly-dark/20"></div>
                     <img src="https://optim.tildacdn.one/tild3361-3963-4234-a665-326434626537/-/format/webp/RG_september_2020156.jpg.webp" alt="Kids learning" class="w-full h-56 md:h-72 object-cover rounded-2xl md:rounded-3xl grayscale group-hover:grayscale-0 transition-all duration-700 border-2 border-ly-dark/10 shadow-sm relative z-10">
                 </div>
-                <div class="lg:col-span-2">
-                    <p class="text-lg sm:text-xl md:text-3xl font-medium leading-tight max-w-3xl border-l-2 border-ly-dark/20 pl-6 md:pl-8 text-gray-800">
-                        An intellectual and creative space for Russian-speaking children (2.5 - 14 yrs). We help them become fully bilingual through exploring the world, communication, and art.
+                <div class="lg:col-span-2 reveal-3" style="animation-delay: 0.8s;">
+                    <p class="text-xl sm:text-2xl md:text-3xl font-medium leading-relaxed max-w-3xl border-l-4 border-ly-dark/30 pl-6 md:pl-8 text-ly-dark font-sans">
+                        Интеллектуальное и творческое пространство для русскоязычных детей (2.5 - 14 лет). Мы помогаем стать полностью двуязычными через познание мира, общение и искусство.
                     </p>
                 </div>
             </div>
@@ -255,169 +233,475 @@
 
     <!-- 02: FORMAT SECTION (Electric Blue Zone) -->
     <section id="format" class="py-20 md:py-32 bg-ly-blue relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="blue">
-        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle">
-            <div class="flex flex-col lg:flex-row justify-between lg:items-end mb-16 md:mb-24 border-b-2 border-white/20 pb-8 md:pb-12 gap-8">
-                <h2 class="text-5xl sm:text-6xl md:text-8xl font-display font-800 text-white tracking-tighter uppercase leading-[0.9]">
-                    The<br>Format
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
+            <div class="flex flex-col lg:flex-row justify-between lg:items-end mb-16 md:mb-24 border-b-2 border-white/20 pb-8 md:pb-12 gap-8 scroll-reveal">
+                <h2 class="fill-on-scroll text-5xl sm:text-6xl md:text-8xl font-display font-900 tracking-tighter uppercase leading-[0.9] text-outline-white text-transparent hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-default">
+                    НАШ<br>ФОРМАТ
                 </h2>
-                <p class="text-lg md:text-xl text-white max-w-sm font-medium leading-relaxed bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 border border-white/20">
-                    Sundays. Groups of 6-12. <br>4-5 subjects combining academic rigor with creative freedom.
+                <p class="text-lg md:text-xl text-white max-w-sm font-medium leading-relaxed bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 border border-white/20 font-sans">
+                    По воскресеньям. Группы 6-12 человек. <br>4-5 предметов, сочетающих академическую строгость с творческой свободой.
                 </p>
             </div>
 
+            <!-- Subject Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                <!-- Cards adjusted for mobile touch areas -->
-                <div class="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
-                    <span class="text-5xl md:text-6xl font-display font-800 text-ly-blue opacity-30 group-hover:opacity-100 transition-opacity">01</span>
-                    <h3 class="text-2xl md:text-3xl font-display font-800 mt-8 md:mt-12 mb-3 md:mb-4 uppercase">Russian</h3>
-                    <p class="text-gray-600 font-medium text-sm md:text-base">Speaking, reading, writing, and literature tailored for active bilinguals.</p>
+                <div onclick="openGenericModal('Русский Язык', 'Развитие речи, чтение, письмо', 'Развитие связной речи, обогащение словарного запаса через классическую и современную литературу. Мы формируем навыки грамотного письма в увлекательной, игровой форме, адаптированной специально для активных билингвов. Язык становится живым инструментом мышления и общения.')" 
+                     class="scroll-reveal bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer flex flex-col h-auto lg:h-full lg:min-h-[22rem]">
+                    <span class="text-5xl md:text-6xl font-display font-900 text-ly-blue opacity-30 group-hover:opacity-100 transition-opacity">01</span>
+                    <h3 class="text-[clamp(1.5rem,2.5vw,2rem)] leading-tight font-display font-900 mt-6 lg:mt-auto mb-3 uppercase tracking-tight break-words">Русский</h3>
+                    <p class="text-gray-600 font-medium text-sm lg:text-base font-sans leading-relaxed mt-auto flex-grow-0">Развитие речи, чтение, письмо и литература для активных билингвов.</p>
                 </div>
-                <div class="bg-ly-yellow p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
-                    <span class="text-5xl md:text-6xl font-display font-800 text-ly-dark opacity-30 group-hover:opacity-100 transition-opacity">02</span>
-                    <h3 class="text-2xl md:text-3xl font-display font-800 mt-8 md:mt-12 mb-3 md:mb-4 uppercase">Math</h3>
-                    <p class="text-gray-800 font-medium text-sm md:text-base">Logic puzzles, arithmetic, and problem-solving via Russian methodology.</p>
+                
+                <div onclick="openGenericModal('Математика', 'Логика и решение задач', 'Наши занятия — это не просто формулы, а исследование и удовольствие от интеллектуальных открытий. Мы учим детей рассуждать логически, не бояться сложных нестандартных задач и видеть красоту в точных науках, синтезируя британские стандарты с глубиной российской школы.')"
+                     class="scroll-reveal delay-100 bg-ly-yellow p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer flex flex-col h-auto lg:h-full lg:min-h-[22rem]">
+                    <span class="text-5xl md:text-6xl font-display font-900 text-ly-dark opacity-30 group-hover:opacity-100 transition-opacity">02</span>
+                    <h3 class="text-[clamp(1.5rem,2.3vw,2rem)] leading-tight font-display font-900 mt-6 lg:mt-auto mb-3 uppercase tracking-tight break-words">Математика</h3>
+                    <p class="text-gray-800 font-medium text-sm lg:text-base font-sans leading-relaxed mt-auto flex-grow-0">Логические задачи, арифметика и решение проблем по сильной методике.</p>
                 </div>
-                <div class="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer">
-                    <span class="text-5xl md:text-6xl font-display font-800 text-ly-blue opacity-30 group-hover:opacity-100 transition-opacity">03</span>
-                    <h3 class="text-2xl md:text-3xl font-display font-800 mt-8 md:mt-12 mb-3 md:mb-4 uppercase">Science</h3>
-                    <p class="text-gray-600 font-medium text-sm md:text-base">Experiments, natural world, biology, and foundational physics.</p>
+                
+                <div onclick="openGenericModal('Наука / Окружающий Мир', 'Эксперименты и познание', 'Мы формируем представление о мире как о целостной системе. Через практические эксперименты дети знакомятся с базовыми концепциями физики, химии и биологии, учатся формулировать гипотезы и делать выводы на русском языке, расширяя терминологическую базу.')"
+                     class="scroll-reveal delay-200 bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer flex flex-col h-auto lg:h-full lg:min-h-[22rem]">
+                    <span class="text-5xl md:text-6xl font-display font-900 text-ly-blue opacity-30 group-hover:opacity-100 transition-opacity">03</span>
+                    <h3 class="text-[clamp(1.5rem,2.5vw,2rem)] leading-tight font-display font-900 mt-6 lg:mt-auto mb-3 uppercase tracking-tight break-words">Наука</h3>
+                    <p class="text-gray-600 font-medium text-sm lg:text-base font-sans leading-relaxed mt-auto flex-grow-0">Эксперименты, окружающий мир, биология и базовые концепции физики.</p>
                 </div>
-                <div class="bg-ly-coral p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer text-white">
-                    <span class="text-5xl md:text-6xl font-display font-800 text-white opacity-40 group-hover:opacity-100 transition-opacity">04</span>
-                    <h3 class="text-2xl md:text-3xl font-display font-800 mt-8 md:mt-12 mb-3 md:mb-4 uppercase text-white">Arts</h3>
-                    <p class="text-white/90 font-medium text-sm md:text-base">Painting, theatrical performances, music, and emotional intellect.</p>
+                
+                <div onclick="openGenericModal('Творчество и Арт', 'Живопись, драма, музыка', 'Творчество в Лицее — это свобода самовыражения без стресса. Дети знакомятся с историей искусств, создают театральные постановки, работают с природными материалами и музыкой. Лексика, изученная на других предметах, закрепляется здесь через игру и образы.')"
+                     class="scroll-reveal delay-300 bg-ly-coral p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border-2 border-transparent shadow-brutal hover:shadow-brutal-hover hover:-translate-y-2 transition-all duration-300 group cursor-pointer text-white flex flex-col h-auto lg:h-full lg:min-h-[22rem]">
+                    <span class="text-5xl md:text-6xl font-display font-900 text-white opacity-40 group-hover:opacity-100 transition-opacity">04</span>
+                    <h3 class="text-[clamp(1.5rem,2.5vw,2rem)] leading-tight font-display font-900 mt-6 lg:mt-auto mb-3 uppercase tracking-tight text-white break-words">Творчество</h3>
+                    <p class="text-white/90 font-medium text-sm lg:text-base font-sans leading-relaxed mt-auto flex-grow-0">Живопись, театральные постановки, музыка и эмоциональный интеллект.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- 03: PROACTIVE EDITORIAL MARQUEE (Coral Zone) -->
-    <section id="gallery" class="py-20 md:py-32 bg-ly-coral relative z-10 zone-trigger overflow-hidden" data-theme="coral">
-        
-        <div class="px-4 sm:px-6 lg:px-12 mb-12 md:mb-20 content-obstacle max-w-[90rem] mx-auto">
-            <h2 class="text-[15vw] md:text-[10vw] leading-none font-display font-800 tracking-tighter uppercase text-outline-white mix-blend-overlay">
-                Moments
+    <section id="gallery" class="py-20 md:py-32 bg-ly-coral relative z-10 zone-trigger overflow-hidden border-b-2 border-ly-dark/20" data-theme="coral">
+        <div class="px-4 sm:px-6 lg:px-12 mb-12 md:mb-20 content-obstacle max-w-[90rem] mx-auto relative z-30">
+            <h2 class="fill-on-scroll text-[14vw] md:text-[10vw] leading-none font-display font-900 tracking-tighter uppercase text-outline-white mix-blend-overlay hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-default">
+                МОМЕНТЫ
             </h2>
         </div>
 
-        <!-- Marquee Wrapper -->
-        <div class="marquee-wrapper flex flex-col gap-4 md:gap-8 w-full">
-            
-            <!-- Track 1 (Moves Left) -->
+        <div class="marquee-wrapper flex flex-col gap-4 md:gap-8 w-full relative z-30">
             <div class="track-left pl-4 md:pl-8">
-                <!-- Group 1 -->
                 <div class="flex gap-4 md:gap-8 pr-4 md:pr-8">
-                    <!-- Adjusted viewport widths for mobile, making them distinct cards -->
-                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer">
+                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3138-6530-4339-b662-646139303938/-/format/webp/2022-081.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer">
-                        <img loading="lazy" src="https://optim.tildacdn.one/tild6266-3132-4436-b965-396232663261/-/format/webp/2023-001.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3532-6663-4330-b134-396566653833/-/format/webp/2023-091.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-square relative rounded-xl md:rounded-2xl cursor-pointer">
+                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-square relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3631-6363-4533-b462-363463636330/-/format/webp/2022-090.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer">
+                    <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3166-3336-4830-a138-333830383365/-/format/webp/20210515-_MG_7092.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
                 </div>
-                <!-- Group 2 (Duplicate for infinite loop) -->
                 <div class="flex gap-4 md:gap-8 pr-4 md:pr-8">
-                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer">
+                     <!-- Duplicate for infinite scroll -->
+                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3138-6530-4339-b662-646139303938/-/format/webp/2022-081.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer">
-                        <img loading="lazy" src="https://optim.tildacdn.one/tild6266-3132-4436-b965-396232663261/-/format/webp/2023-001.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3532-6663-4330-b134-396566653833/-/format/webp/2023-091.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-square relative rounded-xl md:rounded-2xl cursor-pointer">
+                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-square relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3631-6363-4533-b462-363463636330/-/format/webp/2022-090.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer">
+                    <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3166-3336-4830-a138-333830383365/-/format/webp/20210515-_MG_7092.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
                 </div>
             </div>
 
-            <!-- Track 2 (Moves Right) -->
             <div class="track-right pl-4 md:pl-8">
-                <!-- Group 1 -->
                 <div class="flex gap-4 md:gap-8 pr-4 md:pr-8">
-                     <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer">
+                     <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3261-3661-4338-a433-633034363262/-/format/webp/2023-030.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-[4/5] relative rounded-xl md:rounded-2xl cursor-pointer">
-                        <img loading="lazy" src="https://optim.tildacdn.one/tild3037-3030-4335-b965-623561623962/-/format/webp/2023-003.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-[4/5] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3336-3336-4936-a166-323737393838/-/format/webp/oxford_gymnasiym_jan.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer">
-                        <img loading="lazy" src="https://optim.tildacdn.one/tild6635-3532-4334-b439-636431323032/-/format/webp/DSC03603.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3731-3064-4633-b139-336435653166/-/format/webp/_MG_5705-Enhanced-NR.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer">
+                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3231-6532-4730-b633-613866336331/-/format/webp/_MG_6159.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
                 </div>
-                <!-- Group 2 -->
                 <div class="flex gap-4 md:gap-8 pr-4 md:pr-8">
-                     <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer">
+                     <!-- Duplicate -->
+                     <div class="image-container w-[75vw] sm:w-[45vw] md:w-[28vw] shrink-0 aspect-[3/2] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3261-3661-4338-a433-633034363262/-/format/webp/2023-030.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-[4/5] relative rounded-xl md:rounded-2xl cursor-pointer">
-                        <img loading="lazy" src="https://optim.tildacdn.one/tild3037-3030-4335-b965-623561623962/-/format/webp/2023-003.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    <div class="image-container w-[60vw] sm:w-[35vw] md:w-[20vw] shrink-0 aspect-[4/5] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3336-3336-4936-a166-323737393838/-/format/webp/oxford_gymnasiym_jan.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer">
-                        <img loading="lazy" src="https://optim.tildacdn.one/tild6635-3532-4334-b439-636431323032/-/format/webp/DSC03603.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
+                    <div class="image-container w-[80vw] sm:w-[50vw] md:w-[30vw] shrink-0 aspect-video relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
+                        <img loading="lazy" src="https://optim.tildacdn.one/tild3731-3064-4633-b139-336435653166/-/format/webp/_MG_5705-Enhanced-NR.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
-                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer">
+                    <div class="image-container w-[70vw] sm:w-[40vw] md:w-[25vw] shrink-0 aspect-[4/3] relative rounded-xl md:rounded-2xl cursor-pointer border-2 border-ly-dark/10">
                         <img loading="lazy" src="https://optim.tildacdn.one/tild3231-6532-4730-b633-613866336331/-/format/webp/_MG_6159.jpg.webp" class="editorial-image w-full h-full object-cover relative z-10 rounded-xl md:rounded-2xl">
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 
-    <!-- 04: PHILOSOPHY ACCORDION (Yellow Zone) -->
-    <section id="philosophy" class="py-20 md:py-32 bg-ly-yellow relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="yellow">
-        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle">
-            <h2 class="text-5xl sm:text-6xl md:text-8xl font-display font-800 text-ly-dark tracking-tighter uppercase mb-10 md:mb-16 leading-[0.9]">
-                Why we<br>succeed
+    <!-- 04: FULL TEACHERS ROSTER (Lilac Zone) -->
+    <!-- Brand new soft 'ly-lilac' background to break up the color flow elegantly -->
+    <section id="team" class="py-20 md:py-32 bg-ly-lilac relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="lilac">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
+            <h2 class="scroll-reveal fill-on-scroll text-5xl sm:text-6xl md:text-8xl font-display font-900 tracking-tighter uppercase mb-12 md:mb-20 leading-[0.9] text-outline text-transparent hover:text-ly-blue [&.in-view]:text-ly-blue transition-colors duration-500 cursor-default">
+                КОМАНДА
             </h2>
 
-            <div class="border-t-2 border-ly-dark/30">
-                <!-- Accordion 1 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                
+                <!-- 1 -->
+                <div class="scroll-reveal delay-0 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('kalinina1')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild3166-3462-4636-a631-633166616463/antonina.jpeg" class="editorial-image w-full h-full object-cover absolute inset-0">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">Антонина Калинина</h3>
+                    <p class="font-sans text-ly-blue font-bold text-xs uppercase tracking-wider">Русский язык</p>
+                    <div id="bio-kalinina1" class="hidden">
+                        <p class="mb-4">Тоня преподаёт русский язык в Лицее с 2019 года. Она разработала собственные курсы, адаптированные для билингвальных детей от 2 до 12 лет. На её занятиях язык становится живым инструментом мышления, общения, игры и творчества.</p>
+                        <p class="mb-4">Тоня окончила классическое отделение филологического факультета МГУ, а затем защитила докторскую диссертацию в университете Гумбольдтов в Берлине (Dr. Phil). Уже более 20 лет она преподает древние и современные языки, в том числе студентам Оксфордского университета.</p>
+                        <p>Помимо филологии, Тоня— профессиональный художник-иллюстратор и переводчик, а также мама двоих детей-билингвов.</p>
+                    </div>
+                </div>
+
+                <!-- 2 -->
+                <div class="scroll-reveal delay-75 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('kalinina2')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild3438-6162-4933-b462-613339306238/noroot.png" class="editorial-image w-full h-full object-cover absolute inset-0" style="object-position: top;">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">Мелания Калинина</h3>
+                    <p class="font-sans text-ly-blue font-bold text-xs uppercase tracking-wider">Русский, Литература</p>
+                    <div id="bio-kalinina2" class="hidden">
+                        <p class="mb-4">Мелания родилась и училась в Санкт-Петербурге, где окончила НИУ ВШЭ, а сейчас продолжает образование в Оксфордском университете, где работает над докторской диссертацией (DPhil) на факультете Medieval and Modern Languages.</p>
+                        <p>В Лицее Мелания преподает русский язык детям от 5 до 12 лет и проводит занятия литературного клуба для самых старших учеников. Последние два года она разрабатывает собственные курсы по литературе и организовывает читательские онлайн-клубы.</p>
+                    </div>
+                </div>
+
+                <!-- 3 -->
+                <div class="scroll-reveal delay-150 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('sharko')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild3961-6231-4161-a635-373662636534/IMG_8457.jpeg" class="editorial-image w-full h-full object-cover absolute inset-0">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">Анна Шарко</h3>
+                    <p class="font-sans text-ly-coral font-bold text-xs uppercase tracking-wider">Музыка, Драма</p>
+                    <div id="bio-sharko" class="hidden">
+                        <p class="mb-4">Анна ведёт уроки музыки и драмы для детей от 2 до 9 лет. Её занятия — это песни, танцы, театральные постановки, путешествия в мир звуков и культур. Если вы увидите в Лицее человека с гитарой и горящими глазами — скорее всего, это она!</p>
+                        <p>Анна окончила Новосибирский Государственный Педагогический Институт, а затем получила степень PhD по социологии в Университете Васэда в Токио. У неё более 15 лет опыта работы с детьми.</p>
+                    </div>
+                </div>
+
+                <!-- 4 -->
+                <div class="scroll-reveal delay-200 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('glezer')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild3538-3166-4131-a165-333130386561/WhatsApp_Image_2025-.jpeg" class="editorial-image w-full h-full object-cover absolute inset-0">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">Анна Глейзер</h3>
+                    <p class="font-sans text-ly-coral font-bold text-xs uppercase tracking-wider">Арт</p>
+                    <div id="bio-glezer" class="hidden">
+                        <p class="mb-4">Аня создает для Лицея авторские курсы по искусству и участвует в создании спектаклей как сценограф и художник-постановщик. Её занятия — это исследование мира через творчество, работу с образами, природными материалами и фантазией.</p>
+                        <p>Она окончила Эдинбургский университет по направлению Intermedia Art и магистратуру Оксфордского университета в Ruskin School of Art. Сейчас Аня работает над докторской диссертацией в Оксфорде.</p>
+                    </div>
+                </div>
+
+                <!-- 5 -->
+                <div class="scroll-reveal delay-300 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('dvorkin')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild6461-3664-4230-b633-323732373833/WhatsApp_Image_2025-.jpeg" class="editorial-image w-full h-full object-cover absolute inset-0">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">Михаил Дворкин</h3>
+                    <p class="font-sans text-ly-yellow font-bold text-xs uppercase tracking-wider text-ly-dark">Математика, Физика</p>
+                    <div id="bio-dvorkin" class="hidden">
+                        <p class="mb-4">Михаил преподаёт математику в Лицее у детей от 7 до 12 лет. Его занятия — не столько про формулы и алгоритмы, а про исследование, логическое мышление и удовольствие от интеллектуальных открытий.</p>
+                        <p>Михаил окончил кафедру компьютерных технологий Университета ИТМО в Санкт-Петербурге. Более 14 лет преподавал в Лицее «Физико-техническая школа» и был организатором Летней компьютерной школы.</p>
+                    </div>
+                </div>
+
+                <!-- 6 -->
+                <div class="scroll-reveal delay-0 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('bogdanova')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild3136-3634-4166-b163-346635303030/WhatsApp_Image_2025-.jpeg" class="editorial-image w-full h-full object-cover absolute inset-0">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">Виктория Богданова</h3>
+                    <p class="font-sans text-ly-blue font-bold text-xs uppercase tracking-wider">Математика, Русский</p>
+                    <div id="bio-bogdanova" class="hidden">
+                        <p class="mb-4">В Лицее Виктория преподаёт русский язык и математику. Здесь сбылись сразу две её мечты: попробовать себя в работе с малышами и преподавать русский язык.</p>
+                        <p>Она изучала психологию образования в Университете Бристоля и получила диплом факультета образования МГУ. Сейчас работает над диссертацией по педагогике в Оксфордском университете. Более десяти лет работает в образовательной и социальной сфере.</p>
+                    </div>
+                </div>
+
+                <!-- 7 -->
+                <div class="scroll-reveal delay-75 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('soloviev')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild6566-6638-4234-a635-376562663963/WhatsApp_Image_2025-.jpeg" class="editorial-image w-full h-full object-cover absolute inset-0">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">Александр Соловьев</h3>
+                    <p class="font-sans text-oxford-blue font-bold text-xs uppercase tracking-wider">Окружающий Мир, Наука</p>
+                    <div id="bio-soloviev" class="hidden">
+                        <p class="mb-4">Александр — биолог, педагог и человек широчайшего кругозора. Получил степень PhD и много лет занимался наукой и преподаванием в университетах России, США, Японии, Венгрии и Великобритании.</p>
+                        <p>Он проводит научные занятия в Лицее для детей от 7 до 12 лет, цель которых - развить представление о мире как о целостной системе и понимание взаимосвязи между различными науками.</p>
+                    </div>
+                </div>
+
+                <!-- 8 -->
+                <div class="scroll-reveal delay-150 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('novikov')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild6265-6661-4465-b233-383764363162/WhatsApp_Image_2025-.jpeg" class="editorial-image w-full h-full object-cover absolute inset-0">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">Максим Новиков</h3>
+                    <p class="font-sans text-ly-coral font-bold text-xs uppercase tracking-wider">Драма</p>
+                    <div id="bio-novikov" class="hidden">
+                        <p class="mb-4">Максим преподаёт в Лицее драму для учеников от 7 до 12 лет и является соавтором театральных постановок. На его занятиях дети учатся выражать себя, импровизировать и обретают уверенность на сцене и вне её.</p>
+                        <p>В образовании он уже более десяти лет. Прошёл кембриджские сертификации TKT и CAE, а в Оксфорде получил CELTA — международный диплом преподавания.</p>
+                    </div>
+                </div>
+
+                <!-- 9 -->
+                <div class="scroll-reveal delay-200 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('morozova')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild3931-6333-4231-a538-353464663735/WhatsApp_Image_2025-.jpeg" class="editorial-image w-full h-full object-cover absolute inset-0">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">Екатерина Морозова</h3>
+                    <p class="font-sans text-oxford-blue font-bold text-xs uppercase tracking-wider">Русский, A-Level</p>
+                    <div id="bio-morozova" class="hidden">
+                        <p class="mb-4">Катя преподавала русский язык в знаменитом Итонском колледже, а сейчас преподаёт на уровне A-Level в школах Оксфорда. Окончила магистратуру Оксфордского университета, изучая сравнительное литературоведение.</p>
+                        <p>Вне преподавания она занимается искусством: создаёт скульптуры из снега, льда и песка, участвует в конкурсах по всему миру. Верит, что игра и творчество — важнейшие инструменты развития.</p>
+                    </div>
+                </div>
+
+                <!-- 10 -->
+                <div class="scroll-reveal delay-300 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('sharomazova')">
+                    <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
+                        <img src="https://static.tildacdn.one/tild3661-6232-4561-b836-343935306662/IMG_7009.JPG" class="editorial-image w-full h-full object-cover absolute inset-0" style="object-position: top;">
+                    </div>
+                    <h3 class="font-display font-900 text-lg uppercase tracking-tight mb-1 leading-none">София Шаромазова</h3>
+                    <p class="font-sans text-oxford-blue font-bold text-xs uppercase tracking-wider">Развивающее обучение</p>
+                    <div id="bio-sharomazova" class="hidden">
+                        <p class="mb-4">Соня — филолог и специалист по раннему развитию. Билингв (русский и румынский), выпускница филологического факультета МГУ. С юности совмещала гуманитарные и естественно-научные интересы.</p>
+                        <p>В работе с детьми ценит живой диалог, внимание к индивидуальному темпу и любовь к языкам и культурам. Мама четверых детей, в свободное время пишет маслом и увлекается кулинарией.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 05: TIMETABLE ACCORDION (Oxford Blue Zone) -->
+    <section id="timetable" class="py-20 md:py-32 bg-oxford-blue relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="dark">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
+            <h2 class="scroll-reveal fill-on-scroll text-5xl sm:text-6xl md:text-8xl font-display font-900 tracking-tighter uppercase mb-10 md:mb-16 leading-[0.9] text-outline-white text-transparent hover:text-ly-yellow [&.in-view]:text-ly-yellow transition-colors duration-500 cursor-default">
+                РАСПИСАНИЕ
+            </h2>
+
+            <div class="border-t-2 border-white/30 scroll-reveal">
+                <!-- Group Alpha -->
+                <div class="border-b-2 border-white/30 hover:bg-white/10 transition-colors">
+                    <button class="acc-trigger w-full py-5 md:py-8 flex flex-col md:flex-row md:justify-between md:items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <div class="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+                            <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight text-white">Группа Альфа</span>
+                            <span class="bg-ly-coral text-white font-sans font-bold px-3 py-1 rounded-full text-sm shrink-0">2-3 года</span>
+                        </div>
+                        <div class="flex items-center justify-between w-full md:w-auto mt-4 md:mt-0">
+                            <span class="font-sans font-bold text-white/70 text-lg mr-4 md:hidden">Смотреть</span>
+                            <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-white shrink-0 ml-auto md:ml-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                    <div class="acc-content bg-white/5 rounded-2xl mb-6">
+                        <div class="p-6 md:p-8 flex flex-col gap-4">
+                            <p class="text-white font-sans text-xl italic opacity-80">Открыт набор в группу</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Beta -->
+                <div class="border-b-2 border-white/30 hover:bg-white/10 transition-colors">
+                    <button class="acc-trigger w-full py-5 md:py-8 flex flex-col md:flex-row md:justify-between md:items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <div class="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+                            <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight text-white">Группа Бета</span>
+                            <span class="bg-ly-yellow text-ly-dark font-sans font-bold px-3 py-1 rounded-full text-sm shrink-0">3-4 года</span>
+                        </div>
+                        <div class="flex items-center justify-between w-full md:w-auto mt-4 md:mt-0">
+                            <span class="font-sans font-bold text-white/70 text-lg mr-4 md:hidden">Смотреть</span>
+                            <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-white shrink-0 ml-auto md:ml-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                    <div class="acc-content bg-white/5 rounded-2xl mb-6">
+                        <div class="p-6 md:p-8 flex flex-col gap-4">
+                             <div class="flex justify-between items-center pb-2">
+                                <span class="text-white font-sans font-bold text-lg md:text-2xl">10:00 - 12:30</span>
+                                <span class="text-white/80 font-sans text-lg md:text-xl text-right">Учебный день</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Gamma -->
+                <div class="border-b-2 border-white/30 hover:bg-white/10 transition-colors">
+                    <button class="acc-trigger w-full py-5 md:py-8 flex flex-col md:flex-row md:justify-between md:items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <div class="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+                            <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight text-white">Группа Гамма</span>
+                            <span class="bg-ly-blue text-white font-sans font-bold px-3 py-1 rounded-full text-sm shrink-0">4-5 лет</span>
+                        </div>
+                        <div class="flex items-center justify-between w-full md:w-auto mt-4 md:mt-0">
+                            <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-white shrink-0 ml-auto md:ml-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                    <div class="acc-content bg-white/5 rounded-2xl mb-6">
+                        <div class="p-6 md:p-8 flex flex-col gap-4">
+                            <div class="flex justify-between items-center pb-2">
+                                <span class="text-white font-sans font-bold text-lg md:text-2xl">10:30 - 14:00</span>
+                                <span class="text-white/80 font-sans text-lg md:text-xl text-right">Учебный день</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Delta -->
+                <div class="border-b-2 border-white/30 hover:bg-white/10 transition-colors">
+                    <button class="acc-trigger w-full py-5 md:py-8 flex flex-col md:flex-row md:justify-between md:items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <div class="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+                            <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight text-white">Группа Дельта</span>
+                            <span class="bg-ly-coral text-white font-sans font-bold px-3 py-1 rounded-full text-sm shrink-0">5-6 лет</span>
+                        </div>
+                        <div class="flex items-center justify-between w-full md:w-auto mt-4 md:mt-0">
+                            <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-white shrink-0 ml-auto md:ml-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                    <div class="acc-content bg-white/5 rounded-2xl mb-6">
+                        <div class="p-6 md:p-8 flex flex-col gap-4">
+                            <div class="flex justify-between items-center pb-2">
+                                <span class="text-white font-sans font-bold text-lg md:text-2xl">10:00 - 13:30</span>
+                                <span class="text-white/80 font-sans text-lg md:text-xl text-right">Учебный день</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Group Theta -->
+                 <div class="border-b-2 border-white/30 hover:bg-white/10 transition-colors">
+                    <button class="acc-trigger w-full py-5 md:py-8 flex flex-col md:flex-row md:justify-between md:items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <div class="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+                            <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight text-white">Группа Тета</span>
+                            <span class="bg-white text-ly-dark font-sans font-bold px-3 py-1 rounded-full text-sm shrink-0">6-8 лет</span>
+                        </div>
+                        <div class="flex items-center justify-between w-full md:w-auto mt-4 md:mt-0">
+                            <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-white shrink-0 ml-auto md:ml-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                    <div class="acc-content bg-white/5 rounded-2xl mb-6">
+                        <div class="p-6 md:p-8 flex flex-col gap-4">
+                            <div class="flex justify-between items-center pb-2">
+                                <span class="text-white font-sans font-bold text-lg md:text-2xl">10:45 - 14:30</span>
+                                <span class="text-white/80 font-sans text-lg md:text-xl text-right">Учебный день</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Lambda -->
+                <div class="border-b-2 border-white/30 hover:bg-white/10 transition-colors">
+                    <button class="acc-trigger w-full py-5 md:py-8 flex flex-col md:flex-row md:justify-between md:items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <div class="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+                            <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight text-white">Группа Лямбда</span>
+                            <span class="bg-ly-yellow text-ly-dark font-sans font-bold px-3 py-1 rounded-full text-sm shrink-0">8-10 лет</span>
+                        </div>
+                        <div class="flex items-center justify-between w-full md:w-auto mt-4 md:mt-0">
+                            <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-white shrink-0 ml-auto md:ml-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                    <div class="acc-content bg-white/5 rounded-2xl mb-6">
+                        <div class="p-6 md:p-8 flex flex-col gap-4">
+                             <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                                <span class="text-white font-sans font-bold text-lg md:text-2xl">10:00 - 10:45</span>
+                                <span class="text-white/80 font-sans text-lg md:text-xl text-right">Литклуб (доп-но)</span>
+                            </div>
+                            <div class="flex justify-between items-center pb-2">
+                                <span class="text-white font-sans font-bold text-lg md:text-2xl">11:00 - 15:20</span>
+                                <span class="text-white/80 font-sans text-lg md:text-xl text-right">Учебный день</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Omicron -->
+                <div class="border-b-2 border-white/30 hover:bg-white/10 transition-colors">
+                    <button class="acc-trigger w-full py-5 md:py-8 flex flex-col md:flex-row md:justify-between md:items-center focus:outline-none text-left" onclick="toggleAcc(this)">
+                        <div class="flex items-center gap-4 md:gap-6 w-full md:w-auto">
+                            <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight text-white">Группа Омикрон</span>
+                            <span class="bg-ly-blue text-white font-sans font-bold px-3 py-1 rounded-full text-sm shrink-0">10-12 лет</span>
+                        </div>
+                        <div class="flex items-center justify-between w-full md:w-auto mt-4 md:mt-0">
+                            <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-white shrink-0 ml-auto md:ml-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                    <div class="acc-content bg-white/5 rounded-2xl mb-6">
+                        <div class="p-6 md:p-8 flex flex-col gap-4">
+                             <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                                <span class="text-white font-sans font-bold text-lg md:text-2xl">10:00 - 10:45</span>
+                                <span class="text-white/80 font-sans text-lg md:text-xl text-right">Литклуб (доп-но)</span>
+                            </div>
+                            <div class="flex justify-between items-center pb-2">
+                                <span class="text-white font-sans font-bold text-lg md:text-2xl">11:00 - 15:20</span>
+                                <span class="text-white/80 font-sans text-lg md:text-xl text-right">Учебный день</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 06: PHILOSOPHY ACCORDION (Yellow Zone) -->
+    <section id="philosophy" class="py-20 md:py-32 bg-ly-yellow relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="yellow">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
+            <h2 class="scroll-reveal fill-on-scroll text-5xl sm:text-6xl md:text-8xl font-display font-900 tracking-tighter uppercase mb-10 md:mb-16 leading-[0.9] text-outline text-transparent hover:text-ly-dark [&.in-view]:text-ly-dark transition-colors duration-500 cursor-default">
+                ПОЧЕМУ МЫ<br>УСПЕШНЫ
+            </h2>
+
+            <div class="border-t-2 border-ly-dark/30 scroll-reveal">
                 <div class="border-b-2 border-ly-dark/30 hover:bg-white/40 transition-colors">
                     <button class="acc-trigger w-full py-6 md:py-10 flex justify-between items-center focus:outline-none text-left" onclick="toggleAcc(this)">
-                        <span class="text-2xl sm:text-3xl md:text-5xl font-display font-800 uppercase tracking-tight w-4/5 text-gray-900 pr-4">Environment & Overlap</span>
-                        <svg class="acc-arrow w-8 h-8 md:w-10 md:h-10 transition-transform duration-500 text-gray-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight w-4/5 text-gray-900 pr-4">Среда и Интеграция</span>
+                        <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-gray-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                     <div class="acc-content">
-                        <p class="pb-6 md:pb-10 text-base sm:text-lg md:text-2xl font-medium max-w-4xl leading-relaxed text-gray-800">
-                            We create an immersive environment where subjects overlap. The vocabulary learned in Science is reinforced in Art and Russian, mirroring natural language acquisition rather than isolated memorization.
+                        <p class="pb-6 md:pb-10 text-base sm:text-lg md:text-xl font-medium max-w-4xl leading-relaxed text-gray-800 font-sans">
+                            Мы создаем иммерсивную среду, где предметы пересекаются. Лексика, изученная на Науке, закрепляется на Творчестве и Русском языке, что имитирует естественное усвоение языка, а не изолированное заучивание.
                         </p>
                     </div>
                 </div>
 
-                <!-- Accordion 2 -->
                 <div class="border-b-2 border-ly-dark/30 hover:bg-white/40 transition-colors">
                     <button class="acc-trigger w-full py-6 md:py-10 flex justify-between items-center focus:outline-none text-left" onclick="toggleAcc(this)">
-                        <span class="text-2xl sm:text-3xl md:text-5xl font-display font-800 uppercase tracking-tight w-4/5 text-gray-900 pr-4">Meaningful Contacts</span>
-                        <svg class="acc-arrow w-8 h-8 md:w-10 md:h-10 transition-transform duration-500 text-gray-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight w-4/5 text-gray-900 pr-4">Значимые Контакты</span>
+                        <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-gray-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                     <div class="acc-content">
-                        <p class="pb-6 md:pb-10 text-base sm:text-lg md:text-2xl font-medium max-w-4xl leading-relaxed text-gray-800">
-                            Small group sizes (6-12) ensure personalized attention. We foster deep connections between peers and teachers, building the emotional confidence necessary for uninhibited speaking.
+                        <p class="pb-6 md:pb-10 text-base sm:text-lg md:text-xl font-medium max-w-4xl leading-relaxed text-gray-800 font-sans">
+                            Небольшие группы (6-12 человек) обеспечивают индивидуальное внимание. Мы выстраиваем глубокие связи между сверстниками и преподавателями, создавая эмоциональную уверенность, необходимую для свободного общения.
                         </p>
                     </div>
                 </div>
 
-                <!-- Accordion 3 -->
                 <div class="border-b-2 border-ly-dark/30 hover:bg-white/40 transition-colors">
                     <button class="acc-trigger w-full py-6 md:py-10 flex justify-between items-center focus:outline-none text-left" onclick="toggleAcc(this)">
-                        <span class="text-2xl sm:text-3xl md:text-5xl font-display font-800 uppercase tracking-tight w-4/5 text-gray-900 pr-4">Positive Vibes</span>
-                        <svg class="acc-arrow w-8 h-8 md:w-10 md:h-10 transition-transform duration-500 text-gray-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                        <span class="text-2xl sm:text-3xl md:text-4xl font-display font-900 uppercase tracking-tight w-4/5 text-gray-900 pr-4">Позитивная Атмосфера</span>
+                        <svg class="acc-arrow w-8 h-8 transition-transform duration-500 text-gray-800 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                     <div class="acc-content">
-                        <p class="pb-6 md:pb-10 text-base sm:text-lg md:text-2xl font-medium max-w-4xl leading-relaxed text-gray-800">
-                            A warm, welcoming atmosphere where making mistakes is celebrated as part of the process. We ensure children associate the Russian language with joy, play, and creativity.
+                        <p class="pb-6 md:pb-10 text-base sm:text-lg md:text-xl font-medium max-w-4xl leading-relaxed text-gray-800 font-sans">
+                            Теплая, принимающая атмосфера, где ошибки воспринимаются как часть процесса обучения. Мы делаем так, чтобы русский язык ассоциировался у детей с радостью, игрой и творчеством.
                         </p>
                     </div>
                 </div>
@@ -425,43 +709,126 @@
         </div>
     </section>
 
-    <!-- 05: FOOTER (Dark Zone) -->
+    <!-- 07: TESTIMONIALS STICKERS (Light Zone) -->
+    <section class="py-20 md:py-32 bg-[#F4F4F6] relative z-10 zone-trigger overflow-hidden border-y-2 border-ly-dark/20" data-theme="light">
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle text-center mb-12 relative z-30">
+             <h2 class="fill-on-scroll text-[12vw] md:text-[8vw] leading-none font-display font-900 tracking-tighter uppercase text-outline text-transparent mix-blend-overlay opacity-30 hover:opacity-100 hover:text-ly-blue [&.in-view]:opacity-100 [&.in-view]:text-ly-blue transition-all duration-500 cursor-default">
+                ОТЗЫВЫ
+            </h2>
+        </div>
+
+        <div class="relative max-w-[80rem] mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 p-4 md:p-12 items-start z-30">
+            
+            <!-- White Card - Anna -->
+            <div onclick="openGenericModal('Отзыв: Анна', '', 'Русский Лицей - это очень счастливое и живое место. И видимо из этого состояния счастья совершенно естественно вытекает очень высокий уровень образования и его лёгкое детьми усвоение. Мы долго сомневались, нужна ли русская школа ребенку с русскоязычными родителями, но наши сомнения рассеялись, как только мы попали на пробное занятие, и магия не уходит уже 2 года :)')" 
+                 class="scroll-reveal relative overflow-hidden bg-white p-8 md:p-10 rounded-[1.5rem] shadow-brutal-solid border-2 border-ly-dark transform rotate-1 hover:rotate-0 hover:shadow-brutal-solid-hover transition-all duration-300 cursor-pointer">
+                <svg class="absolute -top-4 -right-4 w-32 h-32 text-gray-100 opacity-50 z-0 transform rotate-12" fill="currentColor" viewBox="0 0 32 32"><path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/></svg>
+                
+                <p class="font-sans text-lg md:text-xl font-medium leading-relaxed italic text-gray-800 relative z-10">
+                    «Русский Лицей - это очень счастливое и живое место. Ребенок идет на занятия с огромным удовольствием...»
+                </p>
+                <p class="font-display font-900 mt-8 uppercase text-sm md:text-base text-ly-coral relative z-10">— Анна</p>
+            </div>
+
+            <!-- Yellow Card - Facebook -->
+            <div onclick="openGenericModal('Facebook Review', '', 'Спасибо за такую великолепную постановку! Дети все были просто «в ударе» - у них это на лицах написано, и глаза сверкают. Спасибо всем учителям за такую возможность для наших детей.')" 
+                 class="scroll-reveal delay-100 relative overflow-hidden bg-ly-yellow p-8 md:p-10 rounded-[1.5rem] shadow-brutal-solid border-2 border-ly-dark transform -rotate-2 hover:rotate-0 hover:shadow-brutal-solid-hover transition-all duration-300 cursor-pointer md:mt-12">
+                <svg class="absolute -top-4 -right-4 w-32 h-32 text-yellow-300 opacity-50 z-0 transform rotate-12" fill="currentColor" viewBox="0 0 32 32"><path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/></svg>
+
+                <p class="font-sans text-lg md:text-xl font-medium leading-relaxed italic text-gray-900 relative z-10">
+                    «Спасибо за такую великолепную постановку! Дети все были просто в ударе. Это незабываемый опыт.»
+                </p>
+                <div class="flex items-center gap-3 mt-8 relative z-10">
+                    <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center font-display font-900 text-ly-dark shadow-sm">F</div>
+                    <p class="font-display font-900 uppercase text-sm md:text-base text-ly-dark">Facebook Review</p>
+                </div>
+            </div>
+
+            <!-- White Card - Liana -->
+            <div onclick="openGenericModal('Отзыв: Лиана', '', 'Не хватает слов, чтоб передать свою благодарность за вашу креативность, гибкость, любовь и интерес к детям за то, что вы вкладываете столько усилий, чтобы нашим детям было интересно. То, что делаете вы, ни с чем нельзя сравнить. Это не просто школа, это место, где дети могут творить, радоваться, общаться и получать массу позитивных эмоций.')"
+                 class="scroll-reveal relative overflow-hidden bg-white p-8 md:p-10 rounded-[1.5rem] shadow-brutal-solid border-2 border-ly-dark transform -rotate-1 hover:rotate-0 hover:shadow-brutal-solid-hover transition-all duration-300 cursor-pointer">
+                <svg class="absolute -top-4 -right-4 w-32 h-32 text-gray-100 opacity-50 z-0 transform rotate-12" fill="currentColor" viewBox="0 0 32 32"><path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/></svg>
+
+                <p class="font-sans text-lg md:text-xl font-medium leading-relaxed italic text-gray-800 relative z-10">
+                    «Не хватает слов, чтоб передать свою благодарность преподавателям. Замечательный подход к билингвам...»
+                </p>
+                <p class="font-display font-900 mt-8 uppercase text-sm md:text-base text-oxford-blue relative z-10">— Лиана</p>
+            </div>
+
+             <!-- Blue Card - Parents -->
+             <div onclick="openGenericModal('Отзыв: Родители', '', 'Огромное спасибо за этот праздник и за эту возможность, это был ни с чем не сравнимый восторг! Самый первый раз на сцене для нашего пирата 🏴‍☠️ и такие яркие впечатления!')"
+                  class="scroll-reveal delay-100 relative overflow-hidden bg-ly-blue p-8 md:p-10 rounded-[1.5rem] shadow-brutal-solid border-2 border-ly-dark transform rotate-2 hover:rotate-0 hover:shadow-brutal-solid-hover transition-all duration-300 cursor-pointer text-white md:-mt-8">
+                <svg class="absolute -top-4 -right-4 w-32 h-32 text-blue-500 opacity-50 z-0 transform rotate-12" fill="currentColor" viewBox="0 0 32 32"><path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/></svg>
+
+                <p class="font-sans text-lg md:text-xl font-medium leading-relaxed italic text-white/90 relative z-10">
+                    «Огромное спасибо за этот праздник, за ваши старания и любовь к детям!»
+                </p>
+                <p class="font-display font-900 mt-8 uppercase text-sm md:text-base text-ly-yellow relative z-10">— Родители</p>
+            </div>
+
+            <!-- White Card - Oksana (Full Width on Mobile, Col-Span 2 on Desktop) -->
+            <div onclick="openGenericModal('Отзыв: Оксана', '', 'Лицее всегда по-семейному тепло душевно 🥳 Спасибо всем учителям за понимание и доброе отношение к ученикам, за индивидуальный подход к каждому из детей, за важные знания, необыкновенные и фантастические уроки, возможность самореализации и настоящий пример целеустремлённости! Спасибо всему коллективу за великолепную организацию учебного процесса и доброжелательную атмосферу, которая создана в Лицее!')"
+                 class="scroll-reveal md:col-span-2 relative overflow-hidden bg-white p-8 md:p-10 rounded-[1.5rem] shadow-brutal-solid border-2 border-ly-dark transform rotate-1 hover:rotate-0 hover:shadow-brutal-solid-hover transition-all duration-300 cursor-pointer max-w-4xl mx-auto w-full">
+                <svg class="absolute -top-4 -right-4 w-40 h-40 text-gray-100 opacity-50 z-0 transform rotate-12" fill="currentColor" viewBox="0 0 32 32"><path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.8 3.456-8.256 9.12-8.256 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z"/></svg>
+
+                <p class="font-sans text-lg md:text-xl font-medium leading-relaxed italic text-gray-800 relative z-10">
+                    «В Лицее всегда по-семейному тепло душевно 🥳 Спасибо всем учителям за понимание и доброе отношение к ученикам, за индивидуальный подход к каждому из детей, за важные знания и фантастические уроки...»
+                </p>
+                <p class="font-display font-900 mt-8 uppercase text-sm md:text-base text-[#FF85A2] relative z-10">— Оксана</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 08: FOOTER (Dark Zone) -->
     <footer id="contacts" class="bg-ly-dark text-white pt-20 md:pt-32 pb-12 relative z-10 zone-trigger" data-theme="dark">
-        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle">
-            <h2 class="text-[18vw] md:text-[10vw] leading-none font-display font-800 tracking-tighter uppercase mb-10 md:mb-12 text-outline-white hover:text-white transition-colors cursor-pointer break-words">
-                Say Hello
+        <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
+            <h2 class="fill-on-scroll text-[14vw] md:text-[10vw] leading-none font-display font-900 tracking-tighter uppercase mb-10 md:mb-12 text-outline-white text-transparent hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-pointer break-words">
+                СВЯЗАТЬСЯ
             </h2>
             
-            <div class="grid md:grid-cols-2 gap-8 md:gap-12 border-t-2 border-white/20 pt-8 md:pt-12">
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12 border-t-2 border-white/20 pt-8 md:pt-12 font-sans scroll-reveal">
                 <div>
                     <p class="text-xl md:text-2xl font-bold mb-1 md:mb-2">1 Bardwell Road</p>
                     <p class="text-lg md:text-xl text-gray-400 mb-6 md:mb-8">Oxford, OX2 6SU</p>
-                    <a href="mailto:russianlyceumoxford@gmail.com" class="text-base sm:text-lg md:text-xl underline decoration-2 underline-offset-8 hover:text-ly-coral transition-colors break-all">
+                    <a href="mailto:russianlyceumoxford@gmail.com" class="text-base sm:text-lg md:text-xl underline decoration-2 underline-offset-8 hover:text-ly-coral transition-colors break-all font-bold">
                         russianlyceumoxford@gmail.com
                     </a>
                 </div>
                 <div class="md:text-right flex flex-col items-start md:items-end">
                     <p class="text-lg md:text-xl text-gray-400 mb-1 md:mb-2">WhatsApp</p>
                     <p class="text-xl md:text-2xl font-bold mb-8">+44 7835 734 572</p>
-                    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-xs md:text-sm font-bold uppercase tracking-widest text-ly-yellow hover:text-white transition-colors bg-white/5 rounded-full px-5 py-2.5 md:px-6 md:py-3 border border-ly-yellow/30 hover:border-ly-yellow">
-                        Back to top &uarr;
+                    <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-xs md:text-sm font-bold uppercase tracking-widest text-ly-yellow hover:text-white transition-colors bg-white/5 rounded-full px-5 py-2.5 md:px-6 md:py-3 border border-ly-yellow/30 hover:border-ly-yellow font-display">
+                        Наверх &uarr;
                     </button>
                 </div>
             </div>
             
-            <div class="mt-16 md:mt-24 text-xs md:text-sm text-gray-500 font-bold flex flex-col md:flex-row justify-between items-center md:items-start uppercase tracking-wider gap-4 text-center">
-                <span>© 2024 Russian Lyceum Oxford</span>
+            <div class="mt-16 md:mt-24 text-xs md:text-sm text-gray-500 font-bold flex flex-col md:flex-row justify-between items-center md:items-start uppercase tracking-wider gap-4 text-center font-display scroll-reveal">
+                <span>© 2026 Russian Lyceum Oxford</span>
                 <span>Bilingual Education</span>
             </div>
         </div>
     </footer>
 
-    <!-- LIGHTBOX OVERLAY -->
-    <div id="lightbox" class="fixed inset-0 z-[100] bg-ly-dark/95 backdrop-blur-md hidden flex-col items-center justify-center p-2 sm:p-4 lg:p-12 opacity-0 transition-opacity duration-300">
+    <!-- UNIFIED GENERIC MODAL (Lighter/Frosted Version) -->
+    <div id="generic-modal" class="fixed inset-0 z-[100] bg-ly-dark/30 backdrop-blur-md hidden flex-col items-center justify-center p-4 lg:p-12 opacity-0 transition-opacity duration-500">
+        <button onclick="closeGenericModal()" class="absolute top-4 right-4 lg:top-10 lg:right-10 w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-full flex items-center justify-center text-ly-dark hover:bg-ly-coral hover:text-white transition-colors shadow-lg z-[101]">
+            <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <div class="relative w-full max-w-2xl bg-white p-6 md:p-10 rounded-[1.5rem] shadow-brutal-intense flex flex-col transform scale-90 transition-transform duration-500 border-2 border-ly-dark" id="generic-modal-content">
+            <h3 id="modal-title" class="font-display font-900 text-2xl md:text-4xl uppercase tracking-tight mb-2"></h3>
+            <p id="modal-subtitle" class="font-sans text-ly-blue font-bold text-sm md:text-base uppercase tracking-wider mb-6 pb-6 border-b-2 border-ly-dark/10"></p>
+            <div id="modal-body" class="font-sans text-base md:text-lg text-gray-800 leading-relaxed max-h-[60vh] overflow-y-auto pr-4"></div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX OVERLAY (Gallery - Lighter/Frosted Version) -->
+    <div id="lightbox" class="fixed inset-0 z-[100] bg-ly-dark/30 backdrop-blur-md hidden flex-col items-center justify-center p-2 sm:p-4 lg:p-12 opacity-0 transition-opacity duration-500">
         <button onclick="closeLightbox()" class="absolute top-4 right-4 lg:top-10 lg:right-10 w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-full flex items-center justify-center text-ly-dark hover:bg-ly-coral hover:text-white transition-colors shadow-lg z-[101]">
             <svg class="w-5 h-5 lg:w-6 lg:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
-        <div class="relative w-full max-w-6xl max-h-full bg-white p-2 sm:p-4 lg:p-6 pb-10 sm:pb-12 lg:pb-16 rounded-sm shadow-brutal-intense flex flex-col items-center transform scale-95 transition-transform duration-300" id="lightbox-content">
+        <div class="relative w-full max-w-6xl max-h-full bg-white p-2 sm:p-4 lg:p-6 pb-10 sm:pb-12 lg:pb-16 rounded-sm shadow-brutal-intense flex flex-col items-center transform scale-90 transition-transform duration-500" id="lightbox-content">
             <img id="lightbox-img" src="" class="w-full h-auto max-h-[80vh] object-contain bg-gray-100">
         </div>
     </div>
@@ -492,101 +859,170 @@
         }
         mobileMenuBtn.addEventListener('click', toggleMobileMenu);
 
-        // --- Masthead Hide/Show Logic ---
-        let lastScrollTop = 0;
+        // --- Hover Masthead Logic ---
         const masthead = document.getElementById('masthead');
+        const hoverZone = document.getElementById('header-hover-zone');
         
+        // Hover opens header on Desktop
+        hoverZone.addEventListener('mouseenter', () => {
+            if(!menuOpen) masthead.style.transform = 'translateY(0)';
+        });
+        
+        // Hide when mouse leaves the header area (unless at very top)
+        masthead.addEventListener('mouseleave', () => {
+            if(!menuOpen && window.scrollY > 100) masthead.style.transform = 'translateY(-100%)';
+        });
+
+        // Standard Scroll behavior
         window.addEventListener('scroll', () => {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            if (scrollTop > lastScrollTop && scrollTop > 100) {
-                // Downscroll - only hide if menu isn't open
-                if(!menuOpen) masthead.style.transform = 'translateY(-100%)';
-            } else {
-                // Upscroll
+            if (window.scrollY <= 100) {
                 masthead.style.transform = 'translateY(0)';
+            } else if (!masthead.matches(':hover')) {
+                masthead.style.transform = 'translateY(-100%)';
             }
-            lastScrollTop = scrollTop;
         }, { passive: true });
 
         // --- Brutalist Accordion Logic ---
         function toggleAcc(btn) {
             const content = btn.nextElementSibling;
             const isActive = btn.classList.contains('active');
+            const isTimetable = btn.closest('#timetable');
             
-            document.querySelectorAll('.acc-trigger').forEach(b => {
-                b.classList.remove('active');
-                b.nextElementSibling.style.maxHeight = null;
-            });
+            if (!isTimetable) {
+                document.querySelectorAll('#philosophy .acc-trigger').forEach(b => {
+                    b.classList.remove('active');
+                    b.nextElementSibling.style.maxHeight = null;
+                });
+            }
 
             if (!isActive) {
                 btn.classList.add('active');
                 content.style.maxHeight = content.scrollHeight + "px";
+            } else {
+                btn.classList.remove('active');
+                content.style.maxHeight = null;
             }
         }
 
-        // --- Lightbox Logic ---
+        // --- Unified Modal Logic ---
+        const genericModal = document.getElementById('generic-modal');
+        const genericModalContent = document.getElementById('generic-modal-content');
+        
+        function openGenericModal(title, subtitle, htmlBody) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-subtitle').innerText = subtitle;
+            document.getElementById('modal-subtitle').style.display = subtitle ? 'block' : 'none';
+            document.getElementById('modal-body').innerHTML = htmlBody;
+            
+            genericModal.classList.remove('hidden');
+            genericModal.classList.add('flex');
+            void genericModal.offsetWidth; 
+            genericModal.classList.remove('opacity-0');
+            genericModalContent.classList.remove('scale-90');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openBio(id) {
+            const card = event.currentTarget;
+            const name = card.querySelector('h3').innerText;
+            const role = card.querySelector('p').innerText;
+            const textHTML = document.getElementById(`bio-${id}`).innerHTML;
+            openGenericModal(name, role, textHTML);
+        }
+
+        function closeGenericModal() {
+            genericModal.classList.add('opacity-0');
+            genericModalContent.classList.add('scale-90');
+            setTimeout(() => {
+                genericModal.classList.add('hidden');
+                genericModal.classList.remove('flex');
+                if(!menuOpen && lightbox.classList.contains('hidden')) document.body.style.overflow = ''; 
+            }, 500); 
+        }
+
+        genericModal.addEventListener('click', (e) => {
+            if(e.target === genericModal) closeGenericModal();
+        });
+
+        // --- Gallery Lightbox Logic ---
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const lightboxContent = document.getElementById('lightbox-content');
 
         document.querySelectorAll('.editorial-image').forEach(img => {
-            img.addEventListener('click', () => {
+            img.addEventListener('click', (e) => {
+                e.stopPropagation(); 
+                if(img.closest('#team')) return; 
                 lightboxImg.src = img.src;
                 lightbox.classList.remove('hidden');
                 lightbox.classList.add('flex');
-                void lightbox.offsetWidth; // Reflow
+                void lightbox.offsetWidth;
                 lightbox.classList.remove('opacity-0');
-                lightboxContent.classList.remove('scale-95');
+                lightboxContent.classList.remove('scale-90');
                 document.body.style.overflow = 'hidden';
             });
         });
 
         function closeLightbox() {
             lightbox.classList.add('opacity-0');
-            lightboxContent.classList.add('scale-95');
+            lightboxContent.classList.add('scale-90');
             setTimeout(() => {
                 lightbox.classList.add('hidden');
                 lightbox.classList.remove('flex');
-                if(!menuOpen) document.body.style.overflow = ''; 
-            }, 300);
+                if(!menuOpen && genericModal.classList.contains('hidden')) document.body.style.overflow = ''; 
+            }, 500);
         }
 
         lightbox.addEventListener('click', (e) => {
             if(e.target === lightbox) closeLightbox();
         });
 
-        // --- Intersection Observer for Scroll-Based "Hover" on Mobile ---
-        // This makes images pop into full color when scrolled into the center of the viewport
-        if (window.matchMedia("(hover: none)").matches) {
-            const imageObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
+        // --- Universal Intersection Observer (Scroll Reveal + Mobile Hover Simulation) ---
+        const observerOptions = {
+            root: null,
+            threshold: 0.2,
+            rootMargin: "0px 0px -5% 0px"
+        };
+
+        const globalObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('scroll-reveal')) {
+                        entry.target.classList.add('revealed');
+                    }
+                    if (window.matchMedia("(hover: none)").matches || window.innerWidth < 1024) {
                         entry.target.classList.add('in-view');
-                    } else {
+                    }
+                } else {
+                    if ((window.matchMedia("(hover: none)").matches || window.innerWidth < 1024) && entry.target.classList.contains('fill-on-scroll')) {
                         entry.target.classList.remove('in-view');
                     }
-                });
-            }, {
-                root: null,
-                threshold: 0.6, // Triggers when 60% of the image is visible
-                rootMargin: "-10% 0px -10% 0px" // Focuses on the middle of the screen
+                    if ((window.matchMedia("(hover: none)").matches || window.innerWidth < 1024) && entry.target.classList.contains('image-container')) {
+                        entry.target.classList.remove('in-view');
+                    }
+                }
             });
+        }, observerOptions);
 
-            document.querySelectorAll('.image-container').forEach(container => {
-                imageObserver.observe(container);
-            });
-        }
+        document.querySelectorAll('.scroll-reveal, .image-container, .fill-on-scroll').forEach(el => {
+            globalObserver.observe(el);
+        });
 
-
-        // --- Dynamic Ambient Boat & Wave Physics (Mobile Optimized) ---
+        // --- Sophisticated 2D Physics Boat ---
         const boat = document.getElementById('sailing-boat');
         const canvas = document.getElementById('boat-trail');
         const ctx = canvas.getContext('2d');
         
         let width, height;
         let trail = [];
-        let frameCount = 0;
+        let time = 0;
         let isMobile = false;
+        
+        let boatState = 'waiting'; // State Machine: waiting -> launching -> sailing
+        let px = 0, py = 0;
+        let lastPx = 0, lastPy = 0;
+        let boatScale = 0.2;
+        let tilt = 0;
 
         function resize() {
             width = window.innerWidth;
@@ -597,89 +1033,90 @@
         }
         window.addEventListener('resize', resize);
         resize();
-
-        let px = width / 2;
-        let py = height * 0.3; 
-        let vx = (Math.random() > 0.5 ? 1 : -1) * 0.8; 
-        let vy = 0.5; 
         
-        let MAX_SPEED = 1.3; 
-        const AVOID_RADIUS = isMobile ? 80 : 120; // Tighter hitboxes on mobile
-        const MARGIN = isMobile ? 20 : 40; 
-        
-        const obstacleNodes = document.querySelectorAll('.content-obstacle');
         const zoneTriggers = document.querySelectorAll('.zone-trigger');
 
-        function updateBoat() {
-            frameCount++;
-            let ax = 0;
-            let ay = 0;
-
-            // 1. Obstacle Avoidance
-            obstacleNodes.forEach(obs => {
-                const rect = obs.getBoundingClientRect();
-                if (rect.top > height + 200 || rect.bottom < -200) return;
-
-                const closestX = Math.max(rect.left, Math.min(px, rect.right));
-                const closestY = Math.max(rect.top, Math.min(py, rect.bottom));
-                
-                const dx = px - closestX;
-                const dy = py - closestY;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-
-                if (dist < AVOID_RADIUS && dist > 0.1) {
-                    const force = Math.pow(1 - (dist / AVOID_RADIUS), 2); 
-                    ax += (dx / dist) * force * (isMobile ? 0.25 : 0.18); // Push harder on mobile
-                    ay += (dy / dist) * force * (isMobile ? 0.2 : 0.12); 
+        // Launch Sequence: Wait 1.6s for "творческое" text to load, then detach from logo.
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const headerLogo = document.getElementById('header-logo-container');
+                if(headerLogo) {
+                    const rect = headerLogo.getBoundingClientRect();
+                    // Set origin directly on the header logo coordinates
+                    px = rect.left;
+                    py = rect.top;
+                    lastPx = px; lastPy = py;
                 }
-            });
+                
+                boatState = 'launching';
+                boat.style.opacity = 1;
+                // Short CSS transition for the launch detachment
+                boat.style.transition = 'transform 0.1s ease-out, filter 0.6s ease';
+                
+                setTimeout(() => {
+                    boatState = 'sailing';
+                    // Remove transform transitions so the JS frame loop can animate smoothly
+                    boat.style.transition = 'filter 0.6s ease';
+                }, 1000);
 
-            // 2. Viewport Catchup (Crucial for mobile scrolling)
-            // If the boat gets left too far up or down by user scrolling, gently pull it back to the visible viewport
-            if (py < -50) ay += 0.15; // Boat is above viewport
-            if (py > height + 50) ay -= 0.15; // Boat is below viewport
-
-            // Viewport Bounding
-            if (px < MARGIN) ax += 0.05; 
-            if (px > width - MARGIN) ax -= 0.05; 
-            if (py < MARGIN) ay += 0.03;
-            if (py > height - MARGIN) ay -= 0.03;
-
-            if (px < 0) { px = 0; vx = Math.abs(vx) + 0.5; }
-            if (px > width) { px = width; vx = -Math.abs(vx) - 0.5; }
-            if (py < -100) { py = -100; vy = Math.abs(vy) + 0.5; }
-            if (py > height + 100) { py = height + 100; vy = -Math.abs(vy) - 0.5; }
-
-            // 3. True Wave Physics
-            ax += (Math.random() - 0.5) * 0.015; 
+            }, 1600); // 1.6 seconds delay
             
-            const waveFreq = 0.012;
-            const waveAmp = 0.02;
-            ay += Math.sin(frameCount * waveFreq) * waveAmp;
-            ay += Math.sin(frameCount * 0.003) * 0.015;
+            requestAnimationFrame(updateBoat);
+        });
 
-            vx += ax;
-            vy += ay;
-            vy *= 0.95; 
-
-            MAX_SPEED = isMobile ? 1.8 : 1.3; // Allow slightly faster catchup on mobile
-            const speed = Math.sqrt(vx*vx + vy*vy);
-            if (speed > MAX_SPEED) {
-                vx = (vx / speed) * MAX_SPEED;
-                vy = (vy / speed) * MAX_SPEED;
-            } else if (speed < 0.3) { 
-                vx *= 1.05;
-                vy *= 1.05;
+        function updateBoat() {
+            if (boatState === 'waiting') {
+                requestAnimationFrame(updateBoat);
+                return;
             }
 
-            px += vx;
-            py += vy;
+            time += 0.007; // Much slower, graceful progression
+            
+            if (boatState === 'launching') {
+                boatScale += (1 - boatScale) * 0.05;
+                px += 1.5; // Move down and right to detach from logo
+                py += 1.0;
+                tilt = 15;
+            } else if (boatState === 'sailing') {
+                boatScale = 1;
+                lastPx = px;
+                lastPy = py;
+                
+                // Variegated Lissajous Curve (Oscillating Sines for elegant loops & turning back)
+                let baseSpeed = isMobile ? 0.6 : 1.2;
+                let dx = baseSpeed + Math.sin(time * 1.4) * (isMobile ? 1.5 : 2.5); // When sin is negative, it goes backwards
+                let dy = Math.cos(time * 1.1) * (isMobile ? 1.2 : 2.0) + Math.sin(time * 0.7) * (isMobile ? 0.6 : 1.0);
+                
+                px += dx;
+                py += dy;
+                
+                // Screen Wrap with wide margins so loops aren't clipped aggressively
+                if (px > width + 200) px = -150;
+                if (px < -200) px = width + 150;
+                if (py > height + 200) py = -100;
+                if (py < -200) py = height + 100;
+
+                // Smart Angle Calculation (Ignores massive jumps from screen-wrapping)
+                let actualDx = px - lastPx;
+                let actualDy = py - lastPy;
+                
+                if (Math.abs(actualDx) < 100 && Math.abs(actualDy) < 100) {
+                    if (Math.abs(actualDx) > 0.1 || Math.abs(actualDy) > 0.1) {
+                        let targetTilt = Math.atan2(actualDy, actualDx) * (180 / Math.PI);
+                        
+                        // Normalize differential to prevent 360-degree snapping spins
+                        let diff = targetTilt - tilt;
+                        while (diff < -180) diff += 360;
+                        while (diff > 180) diff -= 360;
+                        tilt += diff * 0.08;
+                    }
+                }
+            }
 
             // --- SPATIAL COLOR AWARENESS ---
             let currentTheme = 'light'; 
             zoneTriggers.forEach(zone => {
                 const rect = zone.getBoundingClientRect();
-                // Check if the center of the viewport (roughly where the boat aims) is in the zone
                 if (height/2 > rect.top && height/2 < rect.bottom) {
                     currentTheme = zone.getAttribute('data-theme');
                 }
@@ -695,35 +1132,37 @@
                     wakeColorPrefix = 'rgba(255, 255, 255, ';
                     break;
                 case 'yellow':
+                case 'green':
                     boat.style.filter = 'brightness(0) drop-shadow(0 2px 4px rgba(0,0,0,0.1))';
                     wakeColorPrefix = 'rgba(17, 17, 17, ';
                     break;
+                case 'lilac':
                 case 'light':
                 default:
-                    boat.style.filter = 'brightness(0) saturate(100%) invert(20%) sepia(90%) saturate(6000%) hue-rotate(215deg) brightness(100%) contrast(105%) drop-shadow(0 2px 4px rgba(0,71,255,0.2))';
-                    wakeColorPrefix = 'rgba(0, 71, 255, ';
+                    boat.style.filter = 'brightness(0) saturate(100%) invert(13%) sepia(50%) saturate(4649%) hue-rotate(205deg) brightness(98%) contrast(98%) drop-shadow(0 2px 4px rgba(5,51,117,0.2))';
+                    wakeColorPrefix = 'rgba(5, 51, 117, ';
                     break;
             }
 
-            const flip = vx < 0 ? -1 : 1;
-            const tilt = vy * 18 * flip; 
-            boat.style.transform = `translate(${px}px, ${py}px) scaleX(${flip}) rotate(${tilt}deg)`;
+            // Visual Trick: If traveling left (tilt > 90 or < -90), flip the boat vertically so it doesn't look upside-down
+            let flip = (Math.abs(tilt) > 90) ? -1 : 1;
+            boat.style.transform = `translate(${px}px, ${py}px) rotate(${tilt}deg) scale(${boatScale}) scaleY(${flip})`;
 
             // --- DRAW WAKE ---
-            // Draw fewer wake particles on mobile to save battery
-            const wakeInterval = isMobile ? 15 : 10;
-            if (frameCount % wakeInterval === 0) {
-                const tailOffset = isMobile ? 45 : 65;
-                const tailX = px + (tailOffset * flip); 
-                const tailY = py + tailOffset; 
-                trail.push({ x: tailX, y: tailY, alpha: 0.8, colorPrefix: wakeColorPrefix });
+            // Only draw wake if the boat is actually sailing (not launching) and moving fast enough
+            if (boatState === 'sailing' && Math.random() < 0.35) {
+                if (Math.abs(px - lastPx) > 0.2 || Math.abs(py - lastPy) > 0.2) {
+                     const wakeX = px - Math.cos(tilt * Math.PI / 180) * (isMobile ? 20 : 40);
+                     const wakeY = py - Math.sin(tilt * Math.PI / 180) * (isMobile ? 20 : 40) + (isMobile ? 10 : 15);
+                     trail.push({ x: wakeX, y: wakeY, alpha: 0.6, colorPrefix: wakeColorPrefix });
+                }
             }
 
             ctx.clearRect(0, 0, width, height);
             
             for (let i = trail.length - 1; i >= 0; i--) {
                 const p = trail[i];
-                p.alpha -= isMobile ? 0.005 : 0.003; // Fade faster on mobile
+                p.alpha -= isMobile ? 0.005 : 0.003; 
                 
                 if (p.alpha <= 0) {
                     trail.splice(i, 1);
@@ -737,10 +1176,6 @@
 
             requestAnimationFrame(updateBoat);
         }
-
-        window.addEventListener('load', () => {
-            setTimeout(() => requestAnimationFrame(updateBoat), 200);
-        });
     </script>
 </body>
 </html>
