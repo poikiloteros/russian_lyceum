@@ -117,7 +117,7 @@
             .marquee-wrapper:hover .track-left, .marquee-wrapper:hover .track-right { animation-play-state: paused; }
         }
 
-        /* Editorial Image Hover & Mobile Scroll View */
+        /* Editorial Image Hover & Scroll View */
         .editorial-image {
             filter: grayscale(85%) contrast(1.1); mix-blend-mode: luminosity;
             transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); border: 2px solid transparent; transform: scale(1);
@@ -129,7 +129,10 @@
                 box-shadow: 10px 10px 0px 0px rgba(17,17,17,0.15); z-index: 20;
             }
         }
-        .image-container.in-view .editorial-image { filter: grayscale(0%) contrast(1); mix-blend-mode: normal; }
+        /* Mobile scroll reveal trigger */
+        .image-container.in-view .editorial-image { 
+            filter: grayscale(0%) contrast(1); mix-blend-mode: normal; 
+        }
 
         /* Accordion */
         .acc-content { max-height: 0; overflow: hidden; transition: max-height 0.6s cubic-bezier(0.85, 0, 0.15, 1); }
@@ -197,30 +200,32 @@
     </div>
 
     <!-- 01: HERO SECTION (Green Impact Zone) -->
-    <section class="relative min-h-[100svh] flex flex-col justify-center pt-24 pb-20 px-4 sm:px-6 lg:px-12 z-10 zone-trigger overflow-hidden bg-ly-green" data-theme="green">
+    <!-- Heights and layout adjusted for proper desktop fitting without massive scroll -->
+    <section class="relative min-h-[100svh] flex flex-col justify-center pt-20 pb-12 px-4 sm:px-6 lg:px-12 z-10 zone-trigger overflow-hidden bg-ly-green" data-theme="green">
         <div class="max-w-[90rem] mx-auto w-full content-obstacle relative z-30">
-            <div class="flex items-center gap-3 mb-8 md:mb-12 pl-1 md:pl-2">
+            <div class="flex items-center gap-3 mb-6 md:mb-10 pl-1 md:pl-2">
                 <div class="w-2.5 h-2.5 md:w-3 md:h-3 bg-ly-blue rounded-full animate-pulse"></div>
                 <p class="text-xs md:text-sm font-bold text-ly-dark uppercase tracking-[0.2em] font-sans">Оксфорд, Великобритания</p>
             </div>
             
             <div class="flex flex-col select-none relative z-20">
-                <h1 class="reveal-1 text-[13vw] md:text-[11vw] leading-[0.9] font-display font-900 tracking-tighter text-ly-dark uppercase relative z-10">
+                <!-- Text scaling adjusted perfectly to fit within 100vw across mobile screens (8.5vw * 11 chars < 100vw) -->
+                <h1 class="reveal-1 text-[8.5vw] md:text-[7vw] lg:text-[5.5rem] xl:text-[6.5rem] leading-[0.9] font-display font-900 tracking-tighter text-ly-dark uppercase relative z-10">
                     ДВУЯЗЫЧНОЕ
                 </h1>
-                <!-- Spacing fixed: relaxed margins to breathe -->
-                <h1 class="reveal-marker text-[20vw] md:text-[16vw] leading-[0.8] font-marker text-ly-blue mt-1 mb-2 ml-[3vw] relative z-30 drop-shadow-md transform -rotate-3">
+                <h1 class="reveal-marker text-[14vw] sm:text-[12vw] md:text-[10vw] lg:text-[8rem] leading-[0.8] font-marker text-ly-blue mt-1 mb-2 ml-[3vw] relative z-30 drop-shadow-md transform -rotate-3">
                     творческое
                 </h1>
-                <h1 class="reveal-3 text-[13vw] md:text-[11vw] leading-[0.9] font-display font-900 tracking-tighter text-outline uppercase relative z-20">
+                <h1 class="reveal-3 text-[8.5vw] md:text-[7vw] lg:text-[5.5rem] xl:text-[6.5rem] leading-[0.9] font-display font-900 tracking-tighter text-outline uppercase relative z-20">
                     ОБРАЗОВАНИЕ
                 </h1>
             </div>
             
-            <div class="mt-12 md:mt-20 grid lg:grid-cols-3 gap-8 lg:gap-24 items-end relative z-30">
-                <div class="lg:col-span-1 relative group w-full max-w-sm mx-auto lg:max-w-none reveal-3" style="animation-delay: 0.6s;">
+            <div class="mt-8 lg:mt-12 grid lg:grid-cols-3 gap-8 lg:gap-24 items-end relative z-30">
+                <!-- Image container class added so observer handles demasking uniformly -->
+                <div class="lg:col-span-1 relative group w-full max-w-sm mx-auto lg:max-w-none reveal-3 image-container" style="animation-delay: 0.6s;">
                     <div class="absolute inset-0 bg-white translate-x-2 translate-y-2 md:translate-x-3 md:translate-y-3 -z-10 rounded-2xl md:rounded-3xl border-2 border-ly-dark/20"></div>
-                    <img src="https://optim.tildacdn.one/tild3361-3963-4234-a665-326434626537/-/format/webp/RG_september_2020156.jpg.webp" alt="Kids learning" class="w-full h-56 md:h-72 object-cover rounded-2xl md:rounded-3xl grayscale group-hover:grayscale-0 transition-all duration-700 border-2 border-ly-dark/10 shadow-sm relative z-10">
+                    <img src="https://optim.tildacdn.one/tild3361-3963-4234-a665-326434626537/-/format/webp/RG_september_2020156.jpg.webp" alt="Kids learning" class="editorial-image w-full h-56 md:h-72 object-cover rounded-2xl md:rounded-3xl border-2 border-ly-dark/10 shadow-sm relative z-10">
                 </div>
                 <div class="lg:col-span-2 reveal-3" style="animation-delay: 0.8s;">
                     <p class="text-xl sm:text-2xl md:text-3xl font-medium leading-relaxed max-w-3xl border-l-4 border-ly-dark/30 pl-6 md:pl-8 text-ly-dark font-sans">
@@ -232,10 +237,12 @@
     </section>
 
     <!-- 02: FORMAT SECTION (Electric Blue Zone) -->
-    <section id="format" class="py-20 md:py-32 bg-ly-blue relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="blue">
+    <!-- Reduced global padding to tighten zones (py-16 lg:py-24) -->
+    <section id="format" class="py-16 lg:py-24 bg-ly-blue relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="blue">
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
-            <div class="flex flex-col lg:flex-row justify-between lg:items-end mb-16 md:mb-24 border-b-2 border-white/20 pb-8 md:pb-12 gap-8 scroll-reveal">
-                <h2 class="fill-on-scroll text-5xl sm:text-6xl md:text-8xl font-display font-900 tracking-tighter uppercase leading-[0.9] text-outline-white text-transparent hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-default">
+            <div class="flex flex-col lg:flex-row justify-between lg:items-end mb-12 md:mb-20 border-b-2 border-white/20 pb-8 md:pb-12 gap-8 scroll-reveal">
+                <!-- Fixed huge scaling to fit nicely -->
+                <h2 class="fill-on-scroll text-[10vw] sm:text-6xl md:text-7xl lg:text-8xl font-display font-900 tracking-tighter uppercase leading-[0.9] text-outline-white text-transparent hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-default">
                     НАШ<br>ФОРМАТ
                 </h2>
                 <p class="text-lg md:text-xl text-white max-w-sm font-medium leading-relaxed bg-white/10 backdrop-blur-md rounded-2xl p-5 md:p-6 border border-white/20 font-sans">
@@ -277,8 +284,8 @@
     </section>
 
     <!-- 03: PROACTIVE EDITORIAL MARQUEE (Coral Zone) -->
-    <section id="gallery" class="py-20 md:py-32 bg-ly-coral relative z-10 zone-trigger overflow-hidden border-b-2 border-ly-dark/20" data-theme="coral">
-        <div class="px-4 sm:px-6 lg:px-12 mb-12 md:mb-20 content-obstacle max-w-[90rem] mx-auto relative z-30">
+    <section id="gallery" class="py-16 lg:py-24 bg-ly-coral relative z-10 zone-trigger overflow-hidden border-b-2 border-ly-dark/20" data-theme="coral">
+        <div class="px-4 sm:px-6 lg:px-12 mb-10 md:mb-16 content-obstacle max-w-[90rem] mx-auto relative z-30">
             <h2 class="fill-on-scroll text-[14vw] md:text-[10vw] leading-none font-display font-900 tracking-tighter uppercase text-outline-white mix-blend-overlay hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-default">
                 МОМЕНТЫ
             </h2>
@@ -352,10 +359,9 @@
     </section>
 
     <!-- 04: FULL TEACHERS ROSTER (Lilac Zone) -->
-    <!-- Brand new soft 'ly-lilac' background to break up the color flow elegantly -->
-    <section id="team" class="py-20 md:py-32 bg-ly-lilac relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="lilac">
+    <section id="team" class="py-16 lg:py-24 bg-ly-lilac relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="lilac">
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
-            <h2 class="scroll-reveal fill-on-scroll text-5xl sm:text-6xl md:text-8xl font-display font-900 tracking-tighter uppercase mb-12 md:mb-20 leading-[0.9] text-outline text-transparent hover:text-ly-blue [&.in-view]:text-ly-blue transition-colors duration-500 cursor-default">
+            <h2 class="scroll-reveal fill-on-scroll text-[10vw] sm:text-6xl md:text-7xl lg:text-8xl font-display font-900 tracking-tighter uppercase mb-12 md:mb-20 leading-[0.9] text-outline text-transparent hover:text-ly-blue [&.in-view]:text-ly-blue transition-colors duration-500 cursor-default">
                 КОМАНДА
             </h2>
 
@@ -363,6 +369,7 @@
                 
                 <!-- 1 -->
                 <div class="scroll-reveal delay-0 bg-gradient-to-br from-white to-[#f0f0f4] rounded-[1.5rem] p-4 border-2 border-ly-dark shadow-brutal hover:shadow-brutal-hover hover:-translate-y-3 transition-all duration-300 cursor-pointer group" onclick="openBio('kalinina1')">
+                    <!-- Image container class triggers demasking natively now via observer -->
                     <div class="image-container aspect-square overflow-hidden rounded-xl border-2 border-ly-dark mb-4 relative bg-gray-200">
                         <img src="https://static.tildacdn.one/tild3166-3462-4636-a631-633166616463/antonina.jpeg" class="editorial-image w-full h-full object-cover absolute inset-0">
                     </div>
@@ -497,9 +504,10 @@
     </section>
 
     <!-- 05: TIMETABLE ACCORDION (Oxford Blue Zone) -->
-    <section id="timetable" class="py-20 md:py-32 bg-oxford-blue relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="dark">
+    <section id="timetable" class="py-16 lg:py-24 bg-oxford-blue relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="dark">
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
-            <h2 class="scroll-reveal fill-on-scroll text-5xl sm:text-6xl md:text-8xl font-display font-900 tracking-tighter uppercase mb-10 md:mb-16 leading-[0.9] text-outline-white text-transparent hover:text-ly-yellow [&.in-view]:text-ly-yellow transition-colors duration-500 cursor-default">
+            <!-- Text scaling fixed to fit tiny mobile screens perfectly -->
+            <h2 class="scroll-reveal fill-on-scroll text-[9vw] sm:text-6xl md:text-7xl lg:text-8xl font-display font-900 tracking-tighter uppercase mb-10 md:mb-16 leading-[0.9] text-outline-white text-transparent hover:text-ly-yellow [&.in-view]:text-ly-yellow transition-colors duration-500 cursor-default">
                 РАСПИСАНИЕ
             </h2>
 
@@ -663,9 +671,9 @@
     </section>
 
     <!-- 06: PHILOSOPHY ACCORDION (Yellow Zone) -->
-    <section id="philosophy" class="py-20 md:py-32 bg-ly-yellow relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="yellow">
+    <section id="philosophy" class="py-16 lg:py-24 bg-ly-yellow relative z-10 zone-trigger border-y-2 border-ly-dark/20" data-theme="yellow">
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
-            <h2 class="scroll-reveal fill-on-scroll text-5xl sm:text-6xl md:text-8xl font-display font-900 tracking-tighter uppercase mb-10 md:mb-16 leading-[0.9] text-outline text-transparent hover:text-ly-dark [&.in-view]:text-ly-dark transition-colors duration-500 cursor-default">
+            <h2 class="scroll-reveal fill-on-scroll text-[9vw] sm:text-6xl md:text-7xl lg:text-8xl font-display font-900 tracking-tighter uppercase mb-10 md:mb-16 leading-[0.9] text-outline text-transparent hover:text-ly-dark [&.in-view]:text-ly-dark transition-colors duration-500 cursor-default">
                 ПОЧЕМУ МЫ<br>УСПЕШНЫ
             </h2>
 
@@ -710,9 +718,9 @@
     </section>
 
     <!-- 07: TESTIMONIALS STICKERS (Light Zone) -->
-    <section class="py-20 md:py-32 bg-[#F4F4F6] relative z-10 zone-trigger overflow-hidden border-y-2 border-ly-dark/20" data-theme="light">
+    <section class="py-16 lg:py-24 bg-[#F4F4F6] relative z-10 zone-trigger overflow-hidden border-y-2 border-ly-dark/20" data-theme="light">
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle text-center mb-12 relative z-30">
-             <h2 class="fill-on-scroll text-[12vw] md:text-[8vw] leading-none font-display font-900 tracking-tighter uppercase text-outline text-transparent mix-blend-overlay opacity-30 hover:opacity-100 hover:text-ly-blue [&.in-view]:opacity-100 [&.in-view]:text-ly-blue transition-all duration-500 cursor-default">
+             <h2 class="fill-on-scroll text-[12vw] md:text-[10vw] lg:text-[8rem] leading-none font-display font-900 tracking-tighter uppercase text-outline text-transparent mix-blend-overlay opacity-30 hover:opacity-100 hover:text-ly-blue [&.in-view]:opacity-100 [&.in-view]:text-ly-blue transition-all duration-500 cursor-default">
                 ОТЗЫВЫ
             </h2>
         </div>
@@ -783,7 +791,8 @@
     <!-- 08: FOOTER (Dark Zone) -->
     <footer id="contacts" class="bg-ly-dark text-white pt-20 md:pt-32 pb-12 relative z-10 zone-trigger" data-theme="dark">
         <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-12 content-obstacle relative z-30">
-            <h2 class="fill-on-scroll text-[14vw] md:text-[10vw] leading-none font-display font-900 tracking-tighter uppercase mb-10 md:mb-12 text-outline-white text-transparent hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-pointer break-words">
+            <!-- Text scaling fixed -->
+            <h2 class="fill-on-scroll text-[10vw] sm:text-[9vw] lg:text-[7rem] leading-none font-display font-900 tracking-tighter uppercase mb-10 md:mb-12 text-outline-white text-transparent hover:text-white [&.in-view]:text-white transition-colors duration-500 cursor-pointer break-words">
                 СВЯЗАТЬСЯ
             </h2>
             
@@ -923,6 +932,7 @@
         }
 
         function openBio(id) {
+            // Support catching the currentTarget cleanly
             const card = event.currentTarget;
             const name = card.querySelector('h3').innerText;
             const role = card.querySelector('p').innerText;
@@ -951,8 +961,10 @@
 
         document.querySelectorAll('.editorial-image').forEach(img => {
             img.addEventListener('click', (e) => {
-                e.stopPropagation(); 
+                // Allow the click to bubble up if it's a team portrait so openBio() can run!
                 if(img.closest('#team')) return; 
+                
+                e.stopPropagation(); 
                 lightboxImg.src = img.src;
                 lightbox.classList.remove('hidden');
                 lightbox.classList.add('flex');
@@ -977,11 +989,12 @@
             if(e.target === lightbox) closeLightbox();
         });
 
-        // --- Universal Intersection Observer (Scroll Reveal + Mobile Hover Simulation) ---
+        // --- Consolidated Universal Intersection Observer ---
+        // Handles generic scroll-reveals, fill-on-scroll texts, AND mobile image de-masking uniformly.
         const observerOptions = {
             root: null,
-            threshold: 0.2,
-            rootMargin: "0px 0px -5% 0px"
+            threshold: 0.25,
+            rootMargin: "0px 0px -10% 0px"
         };
 
         const globalObserver = new IntersectionObserver((entries) => {
@@ -990,14 +1003,12 @@
                     if (entry.target.classList.contains('scroll-reveal')) {
                         entry.target.classList.add('revealed');
                     }
-                    if (window.matchMedia("(hover: none)").matches || window.innerWidth < 1024) {
+                    if (entry.target.classList.contains('image-container') || entry.target.classList.contains('fill-on-scroll')) {
                         entry.target.classList.add('in-view');
                     }
                 } else {
-                    if ((window.matchMedia("(hover: none)").matches || window.innerWidth < 1024) && entry.target.classList.contains('fill-on-scroll')) {
-                        entry.target.classList.remove('in-view');
-                    }
-                    if ((window.matchMedia("(hover: none)").matches || window.innerWidth < 1024) && entry.target.classList.contains('image-container')) {
+                    // Remove in-view so it can re-trigger (useful for mobile scrolling)
+                    if (entry.target.classList.contains('fill-on-scroll') || entry.target.classList.contains('image-container')) {
                         entry.target.classList.remove('in-view');
                     }
                 }
@@ -1018,11 +1029,14 @@
         let time = 0;
         let isMobile = false;
         
-        let boatState = 'waiting'; // State Machine: waiting -> launching -> sailing
+        let boatState = 'waiting'; 
         let px = 0, py = 0;
         let lastPx = 0, lastPy = 0;
         let boatScale = 0.2;
         let tilt = 0;
+        
+        // Hysteresis lock for boat flipping (prevents rapid glitching at curve peaks)
+        window.boatFlipLock = 1;
 
         function resize() {
             width = window.innerWidth;
@@ -1036,13 +1050,12 @@
         
         const zoneTriggers = document.querySelectorAll('.zone-trigger');
 
-        // Launch Sequence: Wait 1.6s for "творческое" text to load, then detach from logo.
+        // Launch Sequence
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const headerLogo = document.getElementById('header-logo-container');
                 if(headerLogo) {
                     const rect = headerLogo.getBoundingClientRect();
-                    // Set origin directly on the header logo coordinates
                     px = rect.left;
                     py = rect.top;
                     lastPx = px; lastPy = py;
@@ -1050,16 +1063,14 @@
                 
                 boatState = 'launching';
                 boat.style.opacity = 1;
-                // Short CSS transition for the launch detachment
                 boat.style.transition = 'transform 0.1s ease-out, filter 0.6s ease';
                 
                 setTimeout(() => {
                     boatState = 'sailing';
-                    // Remove transform transitions so the JS frame loop can animate smoothly
                     boat.style.transition = 'filter 0.6s ease';
                 }, 1000);
 
-            }, 1600); // 1.6 seconds delay
+            }, 1600); 
             
             requestAnimationFrame(updateBoat);
         });
@@ -1070,11 +1081,12 @@
                 return;
             }
 
-            time += 0.007; // Much slower, graceful progression
+            // Time increment dramatically reduced for majestic, slow movement
+            time += 0.0035; 
             
             if (boatState === 'launching') {
                 boatScale += (1 - boatScale) * 0.05;
-                px += 1.5; // Move down and right to detach from logo
+                px += 1.5; 
                 py += 1.0;
                 tilt = 15;
             } else if (boatState === 'sailing') {
@@ -1082,21 +1094,20 @@
                 lastPx = px;
                 lastPy = py;
                 
-                // Variegated Lissajous Curve (Oscillating Sines for elegant loops & turning back)
-                let baseSpeed = isMobile ? 0.6 : 1.2;
-                let dx = baseSpeed + Math.sin(time * 1.4) * (isMobile ? 1.5 : 2.5); // When sin is negative, it goes backwards
+                // Sweeping, graceful Lissajous Curve
+                let baseSpeed = isMobile ? 0.3 : 0.6;
+                let dx = baseSpeed + Math.sin(time * 1.4) * (isMobile ? 1.5 : 2.5); 
                 let dy = Math.cos(time * 1.1) * (isMobile ? 1.2 : 2.0) + Math.sin(time * 0.7) * (isMobile ? 0.6 : 1.0);
                 
                 px += dx;
                 py += dy;
                 
-                // Screen Wrap with wide margins so loops aren't clipped aggressively
+                // Screen Wrap
                 if (px > width + 200) px = -150;
                 if (px < -200) px = width + 150;
                 if (py > height + 200) py = -100;
                 if (py < -200) py = height + 100;
 
-                // Smart Angle Calculation (Ignores massive jumps from screen-wrapping)
                 let actualDx = px - lastPx;
                 let actualDy = py - lastPy;
                 
@@ -1104,16 +1115,19 @@
                     if (Math.abs(actualDx) > 0.1 || Math.abs(actualDy) > 0.1) {
                         let targetTilt = Math.atan2(actualDy, actualDx) * (180 / Math.PI);
                         
-                        // Normalize differential to prevent 360-degree snapping spins
                         let diff = targetTilt - tilt;
                         while (diff < -180) diff += 360;
                         while (diff > 180) diff -= 360;
-                        tilt += diff * 0.08;
+                        // Smoother tilt rotation to match the slower speed
+                        tilt += diff * 0.05; 
                     }
                 }
             }
 
-            // --- SPATIAL COLOR AWARENESS ---
+            // Hysteresis: Require a deep angle commit to flip the boat upside down
+            if (tilt > 100 || tilt < -100) window.boatFlipLock = -1;
+            else if (tilt < 80 && tilt > -80) window.boatFlipLock = 1;
+
             let currentTheme = 'light'; 
             zoneTriggers.forEach(zone => {
                 const rect = zone.getBoundingClientRect();
@@ -1144,12 +1158,10 @@
                     break;
             }
 
-            // Visual Trick: If traveling left (tilt > 90 or < -90), flip the boat vertically so it doesn't look upside-down
-            let flip = (Math.abs(tilt) > 90) ? -1 : 1;
-            boat.style.transform = `translate(${px}px, ${py}px) rotate(${tilt}deg) scale(${boatScale}) scaleY(${flip})`;
+            // Apply locked flip logic
+            boat.style.transform = `translate(${px}px, ${py}px) rotate(${tilt}deg) scale(${boatScale}) scaleY(${window.boatFlipLock})`;
 
             // --- DRAW WAKE ---
-            // Only draw wake if the boat is actually sailing (not launching) and moving fast enough
             if (boatState === 'sailing' && Math.random() < 0.35) {
                 if (Math.abs(px - lastPx) > 0.2 || Math.abs(py - lastPy) > 0.2) {
                      const wakeX = px - Math.cos(tilt * Math.PI / 180) * (isMobile ? 20 : 40);
